@@ -1,0 +1,28 @@
+# Add [name] to create a new annoucement list
+# Every list runs independently of one another
+#
+# A list must always contain three variables:
+#   
+#  - interval (how long to wait between messages - in seconds)
+#  - maintain-order (whether the list should be annouced in order or randomly
+#  - messages (the messages to be announced)
+#
+# The order in which these appear doesn't matter, but an announcement list will not load without them
+#
+# A list can also contain optional values:
+#
+#  - prefix (the prefix to add before all messages in the list
+#
+[example]
+
+# 5 minutes in seconds
+interval = 300
+maintain-order = true
+
+# Optional
+prefix = "&7[&bNeutron&7] &7"
+
+messages = [
+	"Welcome to &bNeutron!",
+	"Neutron is an open-source project willing to welcome contributors with open arms"
+]

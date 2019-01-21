@@ -1,0 +1,26 @@
+plugins {
+ 	id 'net.kyori.blossom' version '1.1.0'
+	id 'java'
+}
+
+group 'me.crypnotic'
+version '1.0.0-SNAPSHOT'
+
+repositories {
+	mavenCentral()
+
+	maven {
+        url 'https://repo.velocitypowered.com/snapshots/'
+    }
+}
+
+dependencies {
+	compile 'com.velocitypowered:velocity-api:1.0-SNAPSHOT'
+	compile 'org.projectlombok:lombok:1.18.4'
+}
+
+blossom {
+	replaceToken '@ID@', name.toLowerCase()
+	replaceToken '@NAME@', name
+	replaceToken '@VERSION@', version
+}
