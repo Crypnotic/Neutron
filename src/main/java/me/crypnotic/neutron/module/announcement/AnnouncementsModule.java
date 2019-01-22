@@ -16,12 +16,11 @@ public class AnnouncementsModule extends AbstractModule {
 
     private File file;
     private Toml toml;
-    private Map<String, Announcements> announcements;
+    private Map<String, Announcements> announcements = new HashMap<String, Announcements>();
 
     public boolean init() {
         this.file = FileIO.getOrCreate(getDataFolderPath(), "announcements.toml");
         this.toml = new Toml().read(file);
-        this.announcements = new HashMap<String, Announcements>();
 
         for (Entry<String, Object> entry : toml.entrySet()) {
             String id = entry.getKey();
@@ -56,7 +55,7 @@ public class AnnouncementsModule extends AbstractModule {
     @Override
     public boolean shutdown() {
         announcements.values().stream().map(Announcements::getTask).forEach(ScheduledTask::cancel);
-        
+
         announcements.clear();
 
         return true;
