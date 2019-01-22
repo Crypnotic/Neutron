@@ -8,6 +8,7 @@ import java.util.Optional;
 import com.moandjiezana.toml.Toml;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyReloadEvent;
+import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 
 import lombok.Getter;
 import me.crypnotic.neutron.api.INeutronAccessor;
@@ -23,11 +24,9 @@ public class ModuleManager implements INeutronAccessor {
     @Getter
     private Toml mainConfig;
 
-    private Map<Class<? extends AbstractModule>, AbstractModule> modules;
+    private Map<Class<? extends AbstractModule>, AbstractModule> modules = new HashMap<Class<? extends AbstractModule>, AbstractModule>();
 
     public boolean init() {
-        this.modules = new HashMap<Class<? extends AbstractModule>, AbstractModule>();
-
         try {
             this.mainConfigFile = FileIO.getOrCreate(getDataFolderPath(), "config.toml");
             this.mainConfig = new Toml().read(mainConfigFile);
@@ -39,6 +38,7 @@ public class ModuleManager implements INeutronAccessor {
         modules.put(AnnouncementsModule.class, new AnnouncementsModule());
         modules.put(ServerListModule.class, new ServerListModule());
 
+        int enabled = 0;
         for (AbstractModule module : modules.values()) {
             Toml table = mainConfig.getTable(module.getName());
             if (table == null) {
@@ -49,6 +49,7 @@ public class ModuleManager implements INeutronAccessor {
             module.setEnabled(table.getBoolean("enabled"));
             if (module.isEnabled()) {
                 if (module.init()) {
+                    enabled += 1;
                     continue;
                 } else {
                     getLogger().warn("Module failed to initialize: " + module.getName());
@@ -62,7 +63,7 @@ public class ModuleManager implements INeutronAccessor {
 
         getProxy().getEventManager().register(getPlugin(), this);
 
-        getLogger().info("Modules loaded: " + modules.size());
+        getLogger().info(String.format("Modules loaded: %d (enabled: %d)", modules.size(), enabled));
 
         return true;
     }
@@ -76,6 +77,9 @@ public class ModuleManager implements INeutronAccessor {
             exception.printStackTrace();
         }
 
+        modules.clear();
+
+        int enabled = 0;
         for (AbstractModule module : modules.values()) {
             Toml table = mainConfig.getTable(module.getName());
             if (table == null) {
@@ -86,6 +90,7 @@ public class ModuleManager implements INeutronAccessor {
             module.setEnabled(table.getBoolean("enabled"));
             if (module.isEnabled()) {
                 if (module.reload()) {
+                    enabled += 1;
                     continue;
                 } else {
                     getLogger().warn("Module failed to reload: " + module.getName());
@@ -99,7 +104,14 @@ public class ModuleManager implements INeutronAccessor {
             }
         }
 
-        getLogger().info(String.format("Modules reloaded: %d", modules.size()));
+        getLogger().info(String.format("Modules reloaded: %d (enabled: %d)", modules.size(), enabled));
+    }
+
+    @Subscribe
+    public void onProxyShutdown(ProxyShutdownEvent event) {
+        getLogger().info("Shutting down active modules...");
+
+        modules.values().stream().filter(AbstractModule::isEnabled).forEach(AbstractModule::shutdown);
     }
 
     @SuppressWarnings("unchecked")
