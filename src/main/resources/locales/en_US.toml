@@ -1,0 +1,32 @@
+alert-message = "&7&l[&c&lALERT&7&l] &e{0}"
+
+find-message = "&b{0} &7is connected to &b{1}"
+
+info-header = "&l&7==> Information for player: &b{0}"
+info-locale = "&7Locale: &b{0}"
+info-ping = "&7Ping: &b{0}"
+info-server = "&7Current Server: &b{0}"
+info-uuid = "&7Unique Id: &b{0}"
+info-version = "&7Minecraft Version: &b{0}"
+
+invalid-usage = "&cUsage: {0}"
+
+list-message = "&a[{0}] &e{1} player{2} online"
+
+message-sender = "&b&lme » {0} &7> &o"
+message-receiver = "&b&l{0} » me &7> &o"
+
+no-permission = "&cYou don't have permission to execute this command."
+not-connected-to-server = "&cYou must be connected to a server to use this subcommand."
+
+send-all = "&aAll players have been sent to &b{0}"
+send-current = "&aAll players from your current server have been sent to &b{0}"
+send-message = "&aYou have been sent to &b{0}"
+send-player = "&b{0} &ahas been sent to &b{1}"
+
+player-offline = "&c{0} is currently offline."
+player-only-command = "&cOnly players can use this subcommand."
+player-only-subcommand = "&cOnly players can use this subcommand."
+
+unknown-player = "&cUnknown player: {0}"
+unknown-server = "&cUnknown server: {0}"

@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import com.velocitypowered.api.proxy.ProxyServer;
 
 import me.crypnotic.neutron.NeutronPlugin;
+import me.crypnotic.neutron.manager.LocaleManager;
 import me.crypnotic.neutron.manager.ModuleManager;
 
 public interface INeutronAccessor {
@@ -25,6 +26,10 @@ public interface INeutronAccessor {
 
     default Path getDataFolderPath() {
         return getPlugin().getDataFolderPath();
+    }
+
+    default LocaleManager getLocaleManager() {
+        return getPlugin().getLocaleManager();
     }
 
     default ModuleManager getModuleManager() {

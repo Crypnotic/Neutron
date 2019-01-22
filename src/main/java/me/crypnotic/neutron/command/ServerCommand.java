@@ -10,20 +10,21 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 
 import me.crypnotic.neutron.api.command.CommandContext;
 import me.crypnotic.neutron.api.command.CommandWrapper;
+import me.crypnotic.neutron.api.locale.Message;
 import me.crypnotic.neutron.util.Strings;
 
 public class ServerCommand implements CommandWrapper {
 
     @Override
     public void handle(CommandSource source, CommandContext context) throws CommandExitException {
-        assertPlayer(source, "&cOnly players can use this command.");
+        assertPlayer(source, Message.PLAYER_ONLY_COMMAND);
         assertPermission(source, "neutron.command.server");
         assertUsage(source, context.size() > 0);
 
         Player player = (Player) source;
         RegisteredServer server = getProxy().getServer(context.get(0)).orElse(null);
 
-        assertNotNull(source, server, "&cUnknown server: {0}", context.get(0));
+        assertNotNull(source, server, Message.UNKNOWN_SERVER, context.get(0));
 
         player.createConnectionRequest(server).fireAndForget();
     }

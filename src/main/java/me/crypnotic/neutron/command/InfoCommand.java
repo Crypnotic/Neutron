@@ -10,6 +10,7 @@ import com.velocitypowered.api.proxy.ServerConnection;
 
 import me.crypnotic.neutron.api.command.CommandContext;
 import me.crypnotic.neutron.api.command.CommandWrapper;
+import me.crypnotic.neutron.api.locale.Message;
 import me.crypnotic.neutron.util.Strings;
 
 public class InfoCommand implements CommandWrapper {
@@ -20,16 +21,16 @@ public class InfoCommand implements CommandWrapper {
         assertUsage(source, context.size() > 0);
 
         Player target = getProxy().getPlayer(context.get(0)).orElse(null);
-        assertNotNull(source, target, "&cUnknown player: {0}", context.get(0));
+        assertNotNull(source, target, Message.UNKNOWN_PLAYER, context.get(0));
 
         ServerConnection server = target.getCurrentServer().orElse(null);
 
-        message(source, "&l&7==> Information for player: &b{0}", target.getUsername());
-        message(source, "&7Unique Id: &b{0}", target.getUniqueId().toString());
-        message(source, "&7Minecraft Version: &b{0}", target.getProtocolVersion());
-        message(source, "&7Locale: &b{0}", target.getPlayerSettings().getLocale());
-        message(source, "&7Current Server: &b{0}", server != null ? server.getServerInfo().getName() : "N/A");
-        message(source, "&7Ping: &b{0}", target.getPing());
+        message(source, Message.INFO_HEADER, target.getUsername());
+        message(source, Message.INFO_UUID, target.getUniqueId().toString());
+        message(source, Message.INFO_VERSION, target.getProtocolVersion());
+        message(source, Message.INFO_LOCALE, target.getPlayerSettings().getLocale());
+        message(source, Message.INFO_SERVER, server != null ? server.getServerInfo().getName() : "N/A");
+        message(source, Message.INFO_PING, target.getPing());
     }
 
     @Override

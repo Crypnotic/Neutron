@@ -21,6 +21,7 @@ import me.crypnotic.neutron.command.ListCommand;
 import me.crypnotic.neutron.command.MessageCommand;
 import me.crypnotic.neutron.command.SendCommand;
 import me.crypnotic.neutron.command.ServerCommand;
+import me.crypnotic.neutron.manager.LocaleManager;
 import me.crypnotic.neutron.manager.ModuleManager;
 
 @Plugin(id = "@ID@", name = "@NAME@", version = "@VERSION@")
@@ -38,17 +39,24 @@ public class NeutronPlugin {
     private Path dataFolderPath;
 
     @Getter
+    private LocaleManager localeManager;
+    @Getter
     private ModuleManager moduleManager;
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
         Neutron.setNeutron(this);
 
+        this.localeManager = new LocaleManager();
         this.moduleManager = new ModuleManager();
 
         if (!moduleManager.init()) {
             logger.warn("Failed to initialize ModuleManager");
             return;
+        }
+        
+        if (!localeManager.init()) {
+            logger.warn("Failed to initialize LocaleManager. Default values will be used");
         }
 
         registerCommands();

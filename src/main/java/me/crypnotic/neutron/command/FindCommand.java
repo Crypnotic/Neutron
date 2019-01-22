@@ -10,6 +10,7 @@ import com.velocitypowered.api.proxy.ServerConnection;
 
 import me.crypnotic.neutron.api.command.CommandContext;
 import me.crypnotic.neutron.api.command.CommandWrapper;
+import me.crypnotic.neutron.api.locale.Message;
 import me.crypnotic.neutron.util.Strings;
 
 public class FindCommand implements CommandWrapper {
@@ -20,13 +21,13 @@ public class FindCommand implements CommandWrapper {
         assertUsage(source, context.size() > 0);
 
         Player target = getProxy().getPlayer(context.get(0)).orElse(null);
-        assertNotNull(source, target, "&cUnknown player: {0}", context.get(0));
+        assertNotNull(source, target, Message.UNKNOWN_PLAYER, context.get(0));
 
         ServerConnection server = target.getCurrentServer().get();
         /* We'll consider this offline as the Player is in a limbo state */
-        assertNotNull(source, server, "&c{0} is currently offline.", context.get(0));
+        assertNotNull(source, server, Message.PLAYER_OFFLINE, context.get(0));
 
-        source.sendMessage(Strings.formatAndColor("&b{0} &7is connected to &b{1}", target.getUsername(), server.getServerInfo().getName()));
+        message(source, Message.FIND_MESSAGE, target.getUsername(), server.getServerInfo().getName());
     }
 
     @Override

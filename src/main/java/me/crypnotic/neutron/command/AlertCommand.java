@@ -5,8 +5,7 @@ import com.velocitypowered.api.command.CommandSource;
 import lombok.RequiredArgsConstructor;
 import me.crypnotic.neutron.api.command.CommandContext;
 import me.crypnotic.neutron.api.command.CommandWrapper;
-import me.crypnotic.neutron.util.Strings;
-import net.kyori.text.TextComponent;
+import me.crypnotic.neutron.api.locale.Message;
 
 @RequiredArgsConstructor
 public class AlertCommand implements CommandWrapper {
@@ -16,12 +15,12 @@ public class AlertCommand implements CommandWrapper {
         assertPermission(source, "neutron.command.alert");
         assertUsage(source, context.size() > 0);
 
-        TextComponent message = Strings.formatAndColor("&7&l[&c&lALERT&7&l] &e" + context.join(" "));
+        String message = context.join(" ");
 
-        getProxy().broadcast(message);
+        getProxy().getAllPlayers().forEach(target -> message(target, Message.ALERT_MESSAGE, message));
 
         /* Log to console since ProxyServer#broadcast doesn't do so */
-        getProxy().getConsoleCommandSource().sendMessage(message);
+        message(getProxy().getConsoleCommandSource(), Message.ALERT_MESSAGE, message);
     }
 
     @Override

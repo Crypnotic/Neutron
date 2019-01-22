@@ -10,11 +10,42 @@ import me.crypnotic.neutron.NeutronPlugin;
 
 public class FileIO {
 
-    public static File getOrCreate(Path path, String name) {
-        File file = new File(path.toFile(), name);
+    public static File getOrCreate(Path folder, String name) {
+        File file = new File(folder.toFile(), name);
         if (!file.exists()) {
             try {
                 try (InputStream input = NeutronPlugin.class.getResourceAsStream("/" + name)) {
+                    if (input != null) {
+                        Files.copy(input, file.toPath());
+                    } else {
+                        file.createNewFile();
+                    }
+                }
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+        }
+        return file;
+    }
+
+    public static File getOrCreateDirectory(Path folder, String name) {
+        File file = new File(folder.toFile(), name);
+        if (file.exists()) {
+            if (!file.isDirectory()) {
+                file.delete();
+                file.mkdirs();
+            }
+        } else {
+            file.mkdirs();
+        }
+        return file;
+    }
+
+    public static File getOrCreateLocale(Path folder, String localName) {
+        File file = new File(folder.toFile(), localName);
+        if (!file.exists()) {
+            try {
+                try (InputStream input = NeutronPlugin.class.getResourceAsStream("/locales/" + localName)) {
                     if (input != null) {
                         Files.copy(input, file.toPath());
                     } else {

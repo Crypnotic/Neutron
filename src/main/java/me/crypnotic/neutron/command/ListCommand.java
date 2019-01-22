@@ -10,7 +10,7 @@ import com.velocitypowered.api.proxy.server.ServerInfo;
 
 import me.crypnotic.neutron.api.command.CommandContext;
 import me.crypnotic.neutron.api.command.CommandWrapper;
-import me.crypnotic.neutron.util.Strings;
+import me.crypnotic.neutron.api.locale.Message;
 import net.kyori.text.TextComponent;
 import net.kyori.text.event.ClickEvent;
 import net.kyori.text.event.HoverEvent;
@@ -27,8 +27,7 @@ public class ListCommand implements CommandWrapper {
 
             String playerString = players.stream().map(Player::getUsername).sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.joining(", "));
 
-            TextComponent message = Strings.formatAndColor("&a[{0}] &e{1} player{2} online", info.getName(), players.size(),
-                    players.size() == 1 ? "" : "s");
+            TextComponent message = getMessage(source, Message.LIST_MESSAGE, info.getName(), players.size());
 
             message = message.hoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.of(playerString)));
             message = message.clickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/server " + info.getName()));
