@@ -12,10 +12,15 @@ repositories {
 	maven {
         url 'https://repo.velocitypowered.com/snapshots/'
     }
+    
+    maven {
+        url = 'https://repo.spongepowered.org/maven'
+    }
 }
 
 dependencies {
 	compile 'com.velocitypowered:velocity-api:1.0-SNAPSHOT'
+	compile 'org.spongepowered:configurate-hocon:3.6'
 	compile 'org.projectlombok:lombok:1.18.4'
 }
 

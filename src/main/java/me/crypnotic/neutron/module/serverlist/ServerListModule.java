@@ -1,16 +1,19 @@
 package me.crypnotic.neutron.module.serverlist;
 
-import com.moandjiezana.toml.Toml;
+import java.util.ArrayList;
+
 import com.velocitypowered.api.proxy.server.ServerPing.SamplePlayer;
 
 import lombok.Getter;
 import me.crypnotic.neutron.module.AbstractModule;
 import me.crypnotic.neutron.util.Strings;
 import net.kyori.text.TextComponent;
+import ninja.leaping.configurate.ConfigurationNode;
 
 public class ServerListModule extends AbstractModule {
 
-    private Toml toml;
+    private ConfigurationNode root;
+
     @Getter
     private TextComponent motd;
     @Getter
@@ -24,15 +27,14 @@ public class ServerListModule extends AbstractModule {
 
     @Override
     public boolean init() {
-        this.toml = getModuleManager().getMainConfig().getTable(getName());
-        this.motd = Strings.color(toml.getString("motd"));
+        this.root = getModuleManager().getRoot().getNode(getName());
+        this.motd = Strings.color(getOrSet(root, "motd", "&7This velocity proxy is proudly powered by &bNeutron", String.class));
 
-        this.playerCountType = PlayerCountType.valueOf(toml.getString("player-count-type"));
-        this.maxPlayerCount = toml.getLong("max-player-count").intValue();
+        this.playerCountType = PlayerCountType.valueOf(getOrSet(root, "player-count-type", "STATIC", String.class));
+        this.maxPlayerCount = getOrSet(root, "max-player-count", 500, Integer.class);
 
-        this.serverPreviewType = ServerPreviewType.valueOf(toml.getString("server-preview-type"));
-        this.previewMessages = toml.getList("preview-messages").stream().map(Object::toString).map(Strings::toSamplePlayer)
-                .toArray(SamplePlayer[]::new);
+        this.serverPreviewType = ServerPreviewType.valueOf(getOrSet(root, "server-preview-type", "MESSAGE", String.class));
+        this.previewMessages = Strings.toSamplePlayerArray(getOrSetList(root, "preview-messages", new ArrayList<String>(), String.class));
 
         getProxy().getEventManager().register(getPlugin(), new ServerListHandler(this));
 

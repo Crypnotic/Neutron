@@ -5,13 +5,16 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import com.moandjiezana.toml.Toml;
+import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.proxy.ProxyReloadEvent;
 
 import lombok.Getter;
 import me.crypnotic.neutron.api.INeutronAccessor;
 import me.crypnotic.neutron.api.locale.Message;
 import me.crypnotic.neutron.api.locale.MessageTable;
 import me.crypnotic.neutron.util.FileIO;
+import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
 public class LocaleManager implements INeutronAccessor {
 
@@ -24,14 +27,14 @@ public class LocaleManager implements INeutronAccessor {
         this.folder = FileIO.getOrCreateDirectory(getDataFolderPath(), "locales");
 
         /* Copy default en_US locale file if not found */
-        FileIO.getOrCreateLocale(folder.toPath(), "en_US.toml");
-
-        getLogger().warn("" + folder.listFiles().length);
+        FileIO.getOrCreateLocale(folder.toPath(), "en_US.hocon");
 
         for (File file : folder.listFiles()) {
             loadMessageTable(file);
         }
 
+        getProxy().getEventManager().register(getPlugin(), this);
+        
         getLogger().info("Locales loaded: " + locales.size());
 
         return true;
@@ -47,6 +50,13 @@ public class LocaleManager implements INeutronAccessor {
         return table != null ? table : locales.get(defaultLocale);
     }
 
+    @Subscribe
+    public void onProxyReload(ProxyReloadEvent event) {
+        locales.clear();
+
+        init();
+    }
+
     private void loadMessageTable(File file) {
         try {
             String localeName = file.getName().split("\\.")[0];
@@ -57,10 +67,12 @@ public class LocaleManager implements INeutronAccessor {
                 return;
             }
 
-            Toml toml = new Toml().read(file);
+            HoconConfigurationLoader loader = HoconConfigurationLoader.builder().setFile(file).build();
+            ConfigurationNode node = loader.load();
+
             MessageTable table = new MessageTable(locale);
             for (Message message : Message.values()) {
-                String content = toml.getString(message.getName());
+                String content = node.getNode(message.getName()).getString(message.getDefaultMessage());
                 if (content == null || content.isEmpty()) {
                     content = message.getDefaultMessage();
                 }

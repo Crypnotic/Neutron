@@ -2,6 +2,7 @@ package me.crypnotic.neutron.util;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -18,6 +19,10 @@ public class Strings {
 
     @SuppressWarnings("deprecation")
     public static TextComponent color(String text) {
+        if (text == null) {
+            return null;
+        }
+
         return ComponentSerializers.LEGACY.deserialize(text, '&');
     }
 
@@ -65,7 +70,11 @@ public class Strings {
     }
 
     @SuppressWarnings("deprecation")
-    public static SamplePlayer toSamplePlayer(String text) {
-        return new SamplePlayer(ComponentSerializers.LEGACY.serialize(color(text)), UUID.randomUUID());
+    public static SamplePlayer[] toSamplePlayerArray(List<String> input) {
+        SamplePlayer[] result = new SamplePlayer[input.size()];
+        for (int i = 0; i < input.size(); i++) {
+            result[i] = new SamplePlayer(ComponentSerializers.LEGACY.serialize(color(input.get(i))), UUID.randomUUID());
+        }
+        return result;
     }
 }

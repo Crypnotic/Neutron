@@ -11,7 +11,7 @@ info-version = "&7Minecraft Version: &b{0}"
 
 invalid-usage = "&cUsage: {0}"
 
-list-message = "&a[{0}] &e{1} player{2} online"
+list-message = "&a[{0}] &e{1} online"
 
 message-sender = "&b&lme » {0} &7> &o"
 message-receiver = "&b&l{0} » me &7> &o"

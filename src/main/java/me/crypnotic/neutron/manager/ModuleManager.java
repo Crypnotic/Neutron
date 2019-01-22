@@ -1,11 +1,11 @@
 package me.crypnotic.neutron.manager;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.moandjiezana.toml.Toml;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyReloadEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
@@ -16,22 +16,22 @@ import me.crypnotic.neutron.module.AbstractModule;
 import me.crypnotic.neutron.module.announcement.AnnouncementsModule;
 import me.crypnotic.neutron.module.serverlist.ServerListModule;
 import me.crypnotic.neutron.util.FileIO;
+import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
 public class ModuleManager implements INeutronAccessor {
 
     @Getter
-    private File mainConfigFile;
+    private File file;
     @Getter
-    private Toml mainConfig;
+    private HoconConfigurationLoader loader;
+    @Getter
+    private ConfigurationNode root;
 
     private Map<Class<? extends AbstractModule>, AbstractModule> modules = new HashMap<Class<? extends AbstractModule>, AbstractModule>();
 
     public boolean init() {
-        try {
-            this.mainConfigFile = FileIO.getOrCreate(getDataFolderPath(), "config.toml");
-            this.mainConfig = new Toml().read(mainConfigFile);
-        } catch (Exception exception) {
-            exception.printStackTrace();
+        if (!loadConfig()) {
             return false;
         }
 
@@ -40,16 +40,17 @@ public class ModuleManager implements INeutronAccessor {
 
         int enabled = 0;
         for (AbstractModule module : modules.values()) {
-            Toml table = mainConfig.getTable(module.getName());
-            if (table == null) {
-                getLogger().warn("Unknown module attempted to load: " + module.getName());
+            ConfigurationNode node = root.getNode(module.getName());
+            if (node.isVirtual()) {
+                getLogger().warn("Failed to load module: " + module.getName());
                 continue;
             }
 
-            module.setEnabled(table.getBoolean("enabled"));
+            module.setEnabled(node.getNode("enabled").getBoolean());
             if (module.isEnabled()) {
                 if (module.init()) {
                     enabled += 1;
+
                     continue;
                 } else {
                     getLogger().warn("Module failed to initialize: " + module.getName());
@@ -70,27 +71,19 @@ public class ModuleManager implements INeutronAccessor {
 
     @Subscribe
     public void onProxyReload(ProxyReloadEvent event) {
-        try {
-            this.mainConfigFile = FileIO.getOrCreate(getDataFolderPath(), "config.toml");
-            this.mainConfig = new Toml().read(mainConfigFile);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-
-        modules.clear();
-
         int enabled = 0;
         for (AbstractModule module : modules.values()) {
-            Toml table = mainConfig.getTable(module.getName());
-            if (table == null) {
-                getLogger().warn("Unknown module attempted to reload: " + module.getName());
+            ConfigurationNode node = root.getNode(module.getName());
+            if (node.isVirtual()) {
+                getLogger().warn("Failed to reload module: " + module.getName());
                 continue;
             }
 
-            module.setEnabled(table.getBoolean("enabled"));
+            module.setEnabled(node.getNode("enabled").getBoolean());
             if (module.isEnabled()) {
                 if (module.reload()) {
                     enabled += 1;
+
                     continue;
                 } else {
                     getLogger().warn("Module failed to reload: " + module.getName());
@@ -99,8 +92,6 @@ public class ModuleManager implements INeutronAccessor {
 
                     continue;
                 }
-            } else {
-
             }
         }
 
@@ -112,6 +103,20 @@ public class ModuleManager implements INeutronAccessor {
         getLogger().info("Shutting down active modules...");
 
         modules.values().stream().filter(AbstractModule::isEnabled).forEach(AbstractModule::shutdown);
+    }
+
+    private boolean loadConfig() {
+        try {
+            this.file = FileIO.getOrCreate(getDataFolderPath(), "config.hocon");
+            this.loader = HoconConfigurationLoader.builder().setFile(file).build();
+            this.root = loader.load();
+
+            return true;
+        } catch (IOException exception) {
+            exception.printStackTrace();
+
+            return false;
+        }
     }
 
     @SuppressWarnings("unchecked")
