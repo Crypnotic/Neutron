@@ -61,11 +61,7 @@ public interface CommandWrapper extends Command, INeutronAccessor {
     default void message(CommandSource source, Message message, Object... values) {
         source.sendMessage(getMessage(source, message, values));
     }
-
-    default void message(CommandSource source, String message, Object... values) {
-        source.sendMessage(Strings.formatAndColor(message, values));
-    }
-
+    
     default TextComponent getMessage(CommandSource source, Message message, Object... values) {
         Locale locale = null;
         if (source instanceof Player) {
