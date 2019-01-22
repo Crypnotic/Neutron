@@ -32,10 +32,10 @@ public class FindCommand implements CommandWrapper {
 
     @Override
     public List<String> suggest(CommandSource source, String[] args) {
-        if (args.length == 0) {
-            return Arrays.asList();
+        if (args.length == 1) {
+            return Strings.matchPlayer(getProxy(), args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
         }
-        return Strings.matchPlayer(getProxy(), args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
+        return Arrays.asList();
     }
 
     @Override
