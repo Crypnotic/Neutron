@@ -22,47 +22,32 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package me.crypnotic.neutron.module.announcement;
+package me.crypnotic.neutron.module.locale;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import me.crypnotic.neutron.NeutronPlugin;
 import me.crypnotic.neutron.util.Strings;
 import net.kyori.text.TextComponent;
 
 @RequiredArgsConstructor
-public class AnnouncementsTask implements Runnable {
+public class LocaleMessageTable {
 
-    private final NeutronPlugin plugin;
-    private final Announcements announcements;
+    @Getter
+    private final Locale locale;
+    private final Map<LocaleMessage, String> messages = new HashMap<LocaleMessage, String>();
 
-    private List<String> localMessages;
+    public TextComponent get(LocaleMessage key, Object... values) {
+        String message = messages.get(key);
 
-    private volatile int index = 0;
+        return Strings.formatAndColor(message != null ? message : key.getDefaultMessage(), values);
+    }
 
-    @Override
-    public void run() {
-        if (index == 0) {
-            if (localMessages == null) {
-                /* Create a local copy to avoid reading or shuffling the master copy */
-                this.localMessages = new ArrayList<String>(announcements.getMessages());
-            }
-
-            if (!announcements.isMaintainOrder()) {
-                Collections.shuffle(localMessages);
-            }
-        }
-
-        TextComponent message = Strings.formatAndColor("{0}{1}", announcements.getPrefix(), localMessages.get(index));
-
-        plugin.getProxy().broadcast(message);
-
-        index += 1;
-        if (index == localMessages.size()) {
-            index = 0;
-        }
+    public boolean set(LocaleMessage key, String message) {
+        /* Return true if not entry existed previously */
+        return messages.put(key, message) == null;
     }
 }

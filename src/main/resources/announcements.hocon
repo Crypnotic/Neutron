@@ -13,14 +13,14 @@
 #
 #  - prefix (the prefix to add before all messages in the list
 #
-example = {
-	interval = 300
-	maintain-order = true
-	
-	prefix = "&7[&bNeutron&7]"
-	
-	messages = [
-		"Welcome to &bNeutron!"
-		"Neutron is an open-source project willing to welcome contributors with open arms"
+example {
+    interval = 300
+    maintain-order = true
+
+    prefix = "&7[&bNeutron&7]"
+
+    messages = [
+        "Welcome to &bNeutron!"
+        "Neutron is an open-source project willing to welcome contributors with open arms"
 	]
 }

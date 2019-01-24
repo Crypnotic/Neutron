@@ -1,33 +1,42 @@
-announcements = {
+announcements {
 	enabled = true
 }
 
-serverlist = {
+locale {
 	enabled = true
+}
+
+serverlist {
+    enabled = true
+    
+    motd = "&7This velocity proxy is proudly powered by &bNeutron"
 	
-	motd = "&7This velocity proxy is proudly powered by &bNeutron"
-	
-	# The server list player count has three different types:
-	# 
-	# STATIC - player count will always be the number defined under `max-player-count`
-	# CURRENT - player count matches the number of players online
-	# ONEMORE - player count shows the number of players online plus 1 
-	#
-	# `max-player-count` is only used with the STATIC player count type
-	
-	player-count-type = "STATIC"
-	max-player-count = 500
-	
-	# The server list preview has three different types:
-	# 
-	# MESSAGE - preview will show the messages defined under `preview-messages`
-	# PLAYERS - preview matches the vanilla server preview of showing online players
-	# EMPTY - preview is empty
-	#
-	# `preview-messages` is only used with the MESSAGE preview type
-	
-	server-preview-type = "MESSAGE"
-	preview-messages = [
-		"&7Powered by a &bNeutron"
-	]
+    player-count {
+		# The server list player count has three different actions:
+		# 
+		# CURRENT - player count matches the number of players online
+		# ONEMORE - player count shows the number of players online plus 1 
+		# PING - player count shows the sum of all backend servers' max player counts. Cached every 5 minutes
+		# STATIC - player count will always be the number defined under `player-count`
+		#
+		# `player-count` is only used with the STATIC player count type
+		action = "STATIC"
+		
+		player-count = 500
+	}
+    
+	server-preview {
+	    # The server list preview has three different actions:
+		# 
+		# MESSAGE - preview will show the messages defined under `messages`
+		# PLAYERS - preview matches the vanilla server preview of showing online players
+		# EMPTY - preview is empty
+		#
+		# `messages` is only used with the MESSAGE preview type
+		action = "MESSAGE"
+		
+		messages = [
+			"&7Powered by a &bNeutron"
+		]
+	}
 }

@@ -1,3 +1,27 @@
+/*
+* This file is part of Neutron, licensed under the MIT License
+*
+* Copyright (c) 2019 Crypnotic <crypnoticofficial@gmail.com>
+*
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
 package me.crypnotic.neutron.manager;
 
 import java.io.File;
@@ -6,18 +30,28 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import com.google.common.reflect.TypeToken;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyReloadEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
+import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 
 import lombok.Getter;
 import me.crypnotic.neutron.api.INeutronAccessor;
 import me.crypnotic.neutron.module.AbstractModule;
 import me.crypnotic.neutron.module.announcement.AnnouncementsModule;
+import me.crypnotic.neutron.module.locale.LocaleModule;
 import me.crypnotic.neutron.module.serverlist.ServerListModule;
 import me.crypnotic.neutron.util.FileIO;
+import me.crypnotic.neutron.util.Strings;
+import net.kyori.text.TextComponent;
+import net.kyori.text.serializer.ComponentSerializers;
 import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
+import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 
 public class ModuleManager implements INeutronAccessor {
 
@@ -36,7 +70,10 @@ public class ModuleManager implements INeutronAccessor {
         }
 
         modules.put(AnnouncementsModule.class, new AnnouncementsModule());
+        modules.put(LocaleModule.class, new LocaleModule());
         modules.put(ServerListModule.class, new ServerListModule());
+
+        registerSerializers();
 
         int enabled = 0;
         for (AbstractModule module : modules.values()) {
@@ -69,6 +106,27 @@ public class ModuleManager implements INeutronAccessor {
         return true;
     }
 
+    private void registerSerializers() {
+        TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(TextComponent.class), new TypeSerializer<TextComponent>() {
+
+            @Override
+            public TextComponent deserialize(TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
+                if (!value.isVirtual()) {
+                    return Strings.color(value.getString());
+                }
+                return null;
+            }
+
+            @Override
+            @SuppressWarnings("deprecation")
+            public void serialize(TypeToken<?> type, TextComponent obj, ConfigurationNode value) throws ObjectMappingException {
+                if (obj != null) {
+                    value.setValue(ComponentSerializers.LEGACY.serialize(obj, '&'));
+                }
+            }
+        });
+    }
+
     @Subscribe
     public void onProxyReload(ProxyReloadEvent event) {
         int enabled = 0;
@@ -90,6 +148,8 @@ public class ModuleManager implements INeutronAccessor {
 
                     module.setEnabled(false);
 
+                    new LegacyChannelIdentifier("");
+
                     continue;
                 }
             }
@@ -107,14 +167,25 @@ public class ModuleManager implements INeutronAccessor {
 
     private boolean loadConfig() {
         try {
-            this.file = FileIO.getOrCreate(getDataFolderPath(), "config.hocon");
-            this.loader = HoconConfigurationLoader.builder().setFile(file).build();
+            this.file = FileIO.getOrCreate(getDataFolderPath(), "config.conf");
+            this.loader = HoconConfigurationLoader.builder().setDefaultOptions(ConfigurationOptions.defaults().setShouldCopyDefaults(true))
+                    .setFile(file).build();
             this.root = loader.load();
 
             return true;
         } catch (IOException exception) {
             exception.printStackTrace();
 
+            return false;
+        }
+    }
+
+    public boolean save() {
+        try {
+            loader.save(root);
+            return true;
+        } catch (IOException exception) {
+            exception.printStackTrace();
             return false;
         }
     }

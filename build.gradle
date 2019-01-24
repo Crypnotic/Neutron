@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'me.crypnotic'
-version '1.0.1-ALPHA'
+version '2.0.0-SNAPSHOT'
 
 repositories {
 	mavenCentral()
@@ -20,8 +20,8 @@ repositories {
 
 dependencies {
 	compile 'com.velocitypowered:velocity-api:1.0-SNAPSHOT'
-	compile 'org.spongepowered:configurate-hocon:3.6'
 	compile 'org.projectlombok:lombok:1.18.4'
+	compile 'org.spongepowered:configurate-hocon:3.6'
 }
 
 blossom {

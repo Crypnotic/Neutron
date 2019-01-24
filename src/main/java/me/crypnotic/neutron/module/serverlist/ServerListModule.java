@@ -1,42 +1,70 @@
+/*
+* This file is part of Neutron, licensed under the MIT License
+*
+* Copyright (c) 2019 Crypnotic <crypnoticofficial@gmail.com>
+*
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
 package me.crypnotic.neutron.module.serverlist;
 
-import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
-import com.velocitypowered.api.proxy.server.ServerPing.SamplePlayer;
+import com.google.common.reflect.TypeToken;
+import com.velocitypowered.api.proxy.server.RegisteredServer;
+import com.velocitypowered.api.scheduler.ScheduledTask;
 
 import lombok.Getter;
 import me.crypnotic.neutron.module.AbstractModule;
-import me.crypnotic.neutron.util.Strings;
-import net.kyori.text.TextComponent;
+import me.crypnotic.neutron.module.serverlist.ServerListConfig.PlayerCount;
 import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
 public class ServerListModule extends AbstractModule {
 
     private ConfigurationNode root;
+    @Getter
+    private ServerListConfig config;
 
+    private ScheduledTask pingTask;
     @Getter
-    private TextComponent motd;
-    @Getter
-    private PlayerCountType playerCountType;
-    @Getter
-    private int maxPlayerCount;
-    @Getter
-    private ServerPreviewType serverPreviewType;
-    @Getter
-    private SamplePlayer[] previewMessages;
+    private int maxPlayerPing;
 
     @Override
     public boolean init() {
         this.root = getModuleManager().getRoot().getNode(getName());
-        this.motd = Strings.color(getOrSet(root, "motd", "&7This velocity proxy is proudly powered by &bNeutron", String.class));
 
-        this.playerCountType = PlayerCountType.valueOf(getOrSet(root, "player-count-type", "STATIC", String.class));
-        this.maxPlayerCount = getOrSet(root, "max-player-count", 500, Integer.class);
+        try {
+            this.config = root.getValue(TypeToken.of(ServerListConfig.class), new ServerListConfig());
+        } catch (ObjectMappingException exception) {
+            exception.printStackTrace();
 
-        this.serverPreviewType = ServerPreviewType.valueOf(getOrSet(root, "server-preview-type", "MESSAGE", String.class));
-        this.previewMessages = Strings.toSamplePlayerArray(getOrSetList(root, "preview-messages", new ArrayList<String>(), String.class));
+            return false;
+        }
 
-        getProxy().getEventManager().register(getPlugin(), new ServerListHandler(this));
+        getProxy().getEventManager().register(getPlugin(), new ServerListHandler(this, config));
+
+        if (config.getPlayerCount().getAction() == PlayerCount.PlayerCountAction.PING) {
+            this.pingTask = getProxy().getScheduler().buildTask(getPlugin(), new PingTask()).repeat(5, TimeUnit.MINUTES).schedule();
+        }
+
+        getModuleManager().save();
 
         return true;
     }
@@ -48,6 +76,10 @@ public class ServerListModule extends AbstractModule {
 
     @Override
     public boolean shutdown() {
+        if (pingTask != null) {
+            pingTask.cancel();
+        }
+
         return true;
     }
 
@@ -56,15 +88,20 @@ public class ServerListModule extends AbstractModule {
         return "serverlist";
     }
 
-    public enum PlayerCountType {
-        CURRENT,
-        ONEMORE,
-        STATIC;
-    }
+    public class PingTask implements Runnable {
 
-    public enum ServerPreviewType {
-        EMPTY,
-        MESSAGE,
-        PLAYERS;
+        int buffer = 0;
+
+        @Override
+        public void run() {
+            for (RegisteredServer server : getProxy().getAllServers()) {
+                server.ping().thenAccept(ping -> {
+                    buffer += ping.asBuilder().getMaximumPlayers();
+                });
+            }
+
+            maxPlayerPing = buffer;
+            buffer = 0;
+        }
     }
 }
