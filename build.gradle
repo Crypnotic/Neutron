@@ -5,6 +5,7 @@ plugins {
 
 group 'me.crypnotic'
 version '2.0.0-SNAPSHOT'
+description 'An open-source essential suite for the Velocity proxy'
 
 repositories {
 	mavenCentral()
@@ -28,4 +29,5 @@ blossom {
 	replaceToken '@ID@', name.toLowerCase()
 	replaceToken '@NAME@', name
 	replaceToken '@VERSION@', version
+	replaceToken '@DESCRIPTION@', description
 }

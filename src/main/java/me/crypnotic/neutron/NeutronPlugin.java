@@ -47,7 +47,7 @@ import me.crypnotic.neutron.command.SendCommand;
 import me.crypnotic.neutron.command.ServerCommand;
 import me.crypnotic.neutron.manager.ModuleManager;
 
-@Plugin(id = "@ID@", name = "@NAME@", version = "@VERSION@")
+@Plugin(id = "@ID@", name = "@NAME@", version = "@VERSION@", description = "@DESCRIPTION@")
 public class NeutronPlugin {
 
     @Inject

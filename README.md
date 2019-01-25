@@ -1,4 +1,4 @@
-# Neutron
+# Neutron | An open-source essential suite for the Velocity proxy
 [![Build Status](https://travis-ci.org/Crypnotic/Neutron.svg?branch=master)](https://travis-ci.org/Crypnotic/Neutron)
 
 ## What is Neutron?
@@ -37,7 +37,7 @@ Alongside the commands, Neutron offers 2 modules:
     * You can choose whether a list will maintain its order or be randomized
     * Each list can have a `prefix`, which will be added to the beginning of every message in the list
 
-_Modules can be `enabled/disabled` in the `config.hocon`_
+_Modules can be `enabled/disabled` in the `config.conf`_
 _All modules support reloading with the `/velocity reload` command_
 
 ## Permissions
@@ -51,7 +51,7 @@ Neutron has a built in Localization manager that allows all messages to be trans
 \** Messages can only be translated if the player's locale has been added to `neutron/locales`
 The English(`en_US`) localization is default and provided with the plugin.
 
-To add another localization, copy the existing `en_US.hocon` file and rename it to the name of the locale you would like to support. Note: it is easier to use the `/info` command on a player to figure out the country tag to use for the name of the file
+To add another localization, copy the existing `en_US.conf` file and rename it to the name of the locale you would like to support. Note: it is easier to use the `/info` command on a player to figure out the country tag to use for the name of the file
 
 ## Issues
 If you run into any issues, please report them on Github: https://github.com/Crypnotic/Neutron/issues
