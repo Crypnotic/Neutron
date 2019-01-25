@@ -1,3 +1,6 @@
+# Neutron
+[![Build Status](https://travis-ci.org/Crypnotic/Neutron.svg?branch=master)](https://travis-ci.org/Crypnotic/Neutron)
+
 ## What is Neutron?
 Neutron is an open-source plugin written to try to provide the bare essentials for servers using Velocity.
 
