@@ -44,7 +44,6 @@ import me.crypnotic.neutron.command.InfoCommand;
 import me.crypnotic.neutron.command.ListCommand;
 import me.crypnotic.neutron.command.MessageCommand;
 import me.crypnotic.neutron.command.SendCommand;
-import me.crypnotic.neutron.command.ServerCommand;
 import me.crypnotic.neutron.manager.ModuleManager;
 
 @Plugin(id = "@ID@", name = "@NAME@", version = "@VERSION@", description = "@DESCRIPTION@")
@@ -87,6 +86,5 @@ public class NeutronPlugin {
         commandManager.register(new ListCommand(), "glist");
         commandManager.register(new MessageCommand(), "message", "msg", "tell", "whisper");
         commandManager.register(new SendCommand(), "send");
-        commandManager.register(new ServerCommand(), "server");
     }
 }

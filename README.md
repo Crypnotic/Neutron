@@ -11,14 +11,13 @@ https://github.com/Crypnotic/Neutron/releases/tag/1.0.1-ALPHA
 _Neutron just entered its first alpha, expect issues when using it for now_
 
 ## What does it offer?
-Currently, Neutron offers 7 commands:
+Currently, Neutron offers 6 commands:
   * `alert` - broadcasts a message to everyone connected to the proxy
   * `find` - allows you to find what server another player is on
   * `info` - provides information regarding a player
   * `glist` - shows a list of all servers along with how many players are connected
   * `message` - sends a private message to another player
-  * `send `- sends either a player/ a server/ or everyone to a specified server
-  * `server` - connects the player to the specified server
+  * `send`- sends either a player/ a server/ or everyone to a specified server
 
 Alongside the commands, Neutron offers 2 modules:
   * Server list:
