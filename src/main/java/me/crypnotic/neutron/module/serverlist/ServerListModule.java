@@ -24,10 +24,14 @@
 */
 package me.crypnotic.neutron.module.serverlist;
 
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.reflect.TypeToken;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
+import com.velocitypowered.api.proxy.server.ServerPing;
+import com.velocitypowered.api.proxy.server.ServerPing.Players;
 import com.velocitypowered.api.scheduler.ScheduledTask;
 
 import lombok.Getter;
@@ -64,8 +68,6 @@ public class ServerListModule extends AbstractModule {
             this.pingTask = getProxy().getScheduler().buildTask(getPlugin(), new PingTask()).repeat(5, TimeUnit.MINUTES).schedule();
         }
 
-        getModuleManager().save();
-
         return true;
     }
 
@@ -95,9 +97,17 @@ public class ServerListModule extends AbstractModule {
         @Override
         public void run() {
             for (RegisteredServer server : getProxy().getAllServers()) {
-                server.ping().thenAccept(ping -> {
-                    buffer += ping.asBuilder().getMaximumPlayers();
-                });
+                try {
+                    ServerPing ping = server.ping().get();
+                    Optional<Players> players = ping.getPlayers();
+
+                    if (players.isPresent()) {
+                        buffer += players.get().getMax();
+                    }
+                } catch (InterruptedException | ExecutionException exception) {
+                    /* Catch silently */
+                }
+
             }
 
             maxPlayerPing = buffer;

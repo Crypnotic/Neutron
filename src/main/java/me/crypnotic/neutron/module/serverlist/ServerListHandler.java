@@ -66,6 +66,7 @@ public class ServerListHandler {
             builder.maximumPlayers(playerCount + 1);
             break;
         case PING:
+            builder.maximumPlayers(module.getMaxPlayerPing());
             break;
         case STATIC:
             builder.maximumPlayers(config.getPlayerCount().getMaxPlayerCount());
