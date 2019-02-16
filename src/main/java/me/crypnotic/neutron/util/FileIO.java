@@ -35,7 +35,8 @@ import me.crypnotic.neutron.NeutronPlugin;
 public class FileIO {
 
     public static File getOrCreate(Path folder, String name) {
-        File file = new File(folder.toFile(), name);
+        File directory = getOrCreateDirectory(folder.getParent(), folder.getFileName().toString());
+        File file = new File(directory, name);
         if (!file.exists()) {
             try {
                 try (InputStream input = NeutronPlugin.class.getResourceAsStream("/" + name)) {
