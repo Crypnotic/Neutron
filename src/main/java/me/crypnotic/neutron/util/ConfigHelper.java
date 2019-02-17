@@ -22,32 +22,22 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package me.crypnotic.neutron.module.locale;
+package me.crypnotic.neutron.util;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import com.google.common.reflect.TypeToken;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import me.crypnotic.neutron.util.Strings;
-import net.kyori.text.TextComponent;
+import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
-@RequiredArgsConstructor
-public class LocaleMessageTable {
+public class ConfigHelper {
 
-    @Getter
-    private final Locale locale;
-    private final Map<LocaleMessage, String> messages = new HashMap<LocaleMessage, String>();
-
-    public TextComponent get(LocaleMessage key, Object... values) {
-        String message = messages.get(key);
-
-        return Strings.formatAndColor(message != null ? message : key.getDefaultMessage(), values);
-    }
-
-    public boolean set(LocaleMessage key, String message) {
-        /* Return true if no entry existed previously */
-        return messages.put(key, message) == null;
+    @SuppressWarnings("unchecked")
+    public static <T> T getSerializable(ConfigurationNode node, T config) {
+        try {
+            return node.getValue(TypeToken.of((Class<T>) config.getClass()), config);
+        } catch (ObjectMappingException exception) {
+            exception.printStackTrace();
+        }
+        return null;
     }
 }

@@ -30,24 +30,32 @@ import java.util.Locale;
 import java.util.Map;
 
 import lombok.Getter;
-import me.crypnotic.neutron.module.AbstractModule;
+import me.crypnotic.neutron.api.module.AbstractModule;
+import me.crypnotic.neutron.util.ConfigHelper;
 import me.crypnotic.neutron.util.FileIO;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
 public class LocaleModule extends AbstractModule {
 
+    private ConfigurationNode root;
+    private LocaleConfig config;
     private File folder;
     private Map<Locale, LocaleMessageTable> locales = new HashMap<Locale, LocaleMessageTable>();
     @Getter
-    private final Locale defaultLocale = Locale.forLanguageTag("en_US");
+    private Locale defaultLocale;
 
     @Override
     public boolean init() {
+        this.root = getModuleManager().getRoot().getNode(getName());
+        this.config = ConfigHelper.getSerializable(root, new LocaleConfig());
+        if (config == null) {
+            return false;
+        }
+
         this.folder = FileIO.getOrCreateDirectory(getDataFolderPath(), "locales");
 
-        /* Copy default en_US locale file if not found */
-        FileIO.getOrCreateLocale(folder.toPath(), "en_US.conf");
+        loadDefaultLocale();
 
         for (File file : folder.listFiles()) {
             loadMessageTable(file);
@@ -68,13 +76,36 @@ public class LocaleModule extends AbstractModule {
         return table != null ? table : locales.get(defaultLocale);
     }
 
+    private void loadDefaultLocale() {
+        String fallbackLocaleName = config.getFallbackLocale();
+        this.defaultLocale = Locale.forLanguageTag(fallbackLocaleName);
+
+        if (defaultLocale != null) {
+            File defaultLocaleFile = FileIO.getOrCreateLocale(folder.toPath(), fallbackLocaleName + ".conf");
+            if (defaultLocaleFile != null) {
+                loadMessageTable(defaultLocaleFile);
+                getLogger().info("Loaded fallback locale: " + fallbackLocaleName);
+
+                return;
+            } else {
+                getLogger().warn("Could not find file for locale: " + fallbackLocaleName);
+                getLogger().warn("Falling back to en_US");
+            }
+        } else {
+            getLogger().warn("Unknown fallback locale specified: " + fallbackLocaleName);
+            getLogger().warn("Falling back to en_US");
+        }
+
+        this.defaultLocale = Locale.forLanguageTag("en_US");
+        FileIO.getOrCreateLocale(folder.toPath(), "en_US.conf");
+    }
+
     private void loadMessageTable(File file) {
         try {
-            String localeName = file.getName().split("\\.")[0];
-
-            Locale locale = Locale.forLanguageTag(localeName.replace("_", "-"));
+            String name = file.getName().split("\\.")[0];
+            Locale locale = Locale.forLanguageTag(name);
             if (locale == null) {
-                getLogger().warn("Unknown locale attempted to load: " + localeName);
+                getLogger().warn("Unknown locale attempted to load: " + name);
                 return;
             }
 

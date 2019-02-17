@@ -25,7 +25,6 @@
 package me.crypnotic.neutron.api.command;
 
 import java.util.Locale;
-import java.util.Optional;
 
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
@@ -33,9 +32,9 @@ import com.velocitypowered.api.proxy.Player;
 
 import lombok.SneakyThrows;
 import me.crypnotic.neutron.api.INeutronAccessor;
-import me.crypnotic.neutron.module.locale.LocaleModule;
 import me.crypnotic.neutron.module.locale.LocaleMessage;
 import me.crypnotic.neutron.module.locale.LocaleMessageTable;
+import me.crypnotic.neutron.module.locale.LocaleModule;
 import me.crypnotic.neutron.util.Strings;
 import net.kyori.text.TextComponent;
 
@@ -89,14 +88,14 @@ public interface CommandWrapper extends Command, INeutronAccessor {
     }
 
     default TextComponent getMessage(CommandSource source, LocaleMessage message, Object... values) {
-        Locale locale = null;
-        if (source instanceof Player) {
-            locale = ((Player) source).getPlayerSettings().getLocale();
-        }
+        LocaleModule module = getModuleManager().get(LocaleModule.class);
+        if (module.isEnabled()) {
+            Locale locale = module.getDefaultLocale();
+            if (source instanceof Player) {
+                locale = ((Player) source).getPlayerSettings().getLocale();
+            }
 
-        Optional<LocaleModule> module = getModuleManager().get(LocaleModule.class);
-        if (module.isPresent() && module.get().isEnabled()) {
-            LocaleMessageTable table = module.get().get(locale);
+            LocaleMessageTable table = module.get(locale);
             if (table != null) {
                 return table.get(message, values);
             }

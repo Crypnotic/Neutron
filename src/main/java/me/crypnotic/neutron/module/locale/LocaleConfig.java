@@ -24,30 +24,14 @@
 */
 package me.crypnotic.neutron.module.locale;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import me.crypnotic.neutron.util.Strings;
-import net.kyori.text.TextComponent;
+import ninja.leaping.configurate.objectmapping.Setting;
+import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
-@RequiredArgsConstructor
-public class LocaleMessageTable {
+@ConfigSerializable
+public class LocaleConfig {
 
     @Getter
-    private final Locale locale;
-    private final Map<LocaleMessage, String> messages = new HashMap<LocaleMessage, String>();
-
-    public TextComponent get(LocaleMessage key, Object... values) {
-        String message = messages.get(key);
-
-        return Strings.formatAndColor(message != null ? message : key.getDefaultMessage(), values);
-    }
-
-    public boolean set(LocaleMessage key, String message) {
-        /* Return true if no entry existed previously */
-        return messages.put(key, message) == null;
-    }
+    @Setting("fallback-locale")
+    private String fallbackLocale = "en-US";
 }

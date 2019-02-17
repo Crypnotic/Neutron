@@ -48,9 +48,9 @@ For example: the permission for alert is `neutron.command.alert`
 Neutron has a built in Localization manager that allows all messages to be translated per player**
 
 \** Messages can only be translated if the player's locale has been added to `neutron/locales`
-The English(`en-US`) localization is default and provided with the plugin.
+The English(`en_US`) localization is default and provided with the plugin.
 
-To add another localization, copy the existing `en-US.conf` file and rename it to the name of the locale you would like to support. Note: it is easier to use the `/info` command on a player to figure out the country tag to use for the name of the file
+To add another localization, copy the existing `en_US.conf` file and rename it to the name of the locale you would like to support. Note: it is easier to use the `/info` command on a player to figure out the country tag to use for the name of the file
 
 ## Issues
 If you run into any issues, please report them on Github: https://github.com/Crypnotic/Neutron/issues

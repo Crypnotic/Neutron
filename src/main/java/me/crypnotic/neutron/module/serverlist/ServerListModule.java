@@ -28,17 +28,16 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import com.google.common.reflect.TypeToken;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerPing;
 import com.velocitypowered.api.proxy.server.ServerPing.Players;
 import com.velocitypowered.api.scheduler.ScheduledTask;
 
 import lombok.Getter;
-import me.crypnotic.neutron.module.AbstractModule;
+import me.crypnotic.neutron.api.module.AbstractModule;
 import me.crypnotic.neutron.module.serverlist.ServerListConfig.PlayerCount;
+import me.crypnotic.neutron.util.ConfigHelper;
 import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
 public class ServerListModule extends AbstractModule {
 
@@ -53,12 +52,8 @@ public class ServerListModule extends AbstractModule {
     @Override
     public boolean init() {
         this.root = getModuleManager().getRoot().getNode(getName());
-
-        try {
-            this.config = root.getValue(TypeToken.of(ServerListConfig.class), new ServerListConfig());
-        } catch (ObjectMappingException exception) {
-            exception.printStackTrace();
-
+        this.config = ConfigHelper.getSerializable(root, new ServerListConfig());
+        if (config == null) {
             return false;
         }
 

@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.velocitypowered.api.scheduler.ScheduledTask;
 
-import me.crypnotic.neutron.module.AbstractModule;
+import me.crypnotic.neutron.api.module.AbstractModule;
 import me.crypnotic.neutron.util.FileIO;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;

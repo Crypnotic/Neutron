@@ -28,17 +28,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import com.google.common.reflect.TypeToken;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyReloadEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
-import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 
 import lombok.Getter;
 import me.crypnotic.neutron.api.INeutronAccessor;
-import me.crypnotic.neutron.module.AbstractModule;
+import me.crypnotic.neutron.api.module.AbstractModule;
 import me.crypnotic.neutron.module.announcement.AnnouncementsModule;
 import me.crypnotic.neutron.module.locale.LocaleModule;
 import me.crypnotic.neutron.module.serverlist.ServerListModule;
@@ -148,8 +146,6 @@ public class ModuleManager implements INeutronAccessor {
 
                     module.setEnabled(false);
 
-                    new LegacyChannelIdentifier("");
-
                     continue;
                 }
             }
@@ -190,8 +186,7 @@ public class ModuleManager implements INeutronAccessor {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends AbstractModule> Optional<T> get(Class<T> clazz) {
-        return (Optional<T>) Optional.ofNullable(modules.get(clazz));
+    public <T extends AbstractModule> T get(Class<T> clazz) {
+        return clazz.cast(modules.get(clazz));
     }
 }
