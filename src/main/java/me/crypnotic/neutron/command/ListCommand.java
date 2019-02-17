@@ -43,7 +43,7 @@ public class ListCommand implements CommandWrapper {
 
     @Override
     public void handle(CommandSource source, CommandContext context) throws CommandExitException {
-        assertPermission(source, "neutron.command.list");
+        assertPermission(source, "neutron.command.glist");
 
         for (RegisteredServer server : getProxy().getAllServers()) {
             ServerInfo info = server.getServerInfo();
