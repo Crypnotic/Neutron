@@ -21,7 +21,10 @@ repositories {
 }
 
 dependencies {
-	compile 'org.spongepowered:configurate-hocon:3.6'
+	compile ('org.spongepowered:configurate-hocon:3.6') {
+		exclude group: 'org.checkerframework', module: 'checker-qual'
+		exclude group: 'com.google.guava', module: 'guava'
+	}
 	
 	compileOnly 'com.velocitypowered:velocity-api:1.0-SNAPSHOT'
 	annotationProcessor 'com.velocitypowered:velocity-api:1.0-SNAPSHOT'
