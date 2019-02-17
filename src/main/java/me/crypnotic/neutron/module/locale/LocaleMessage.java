@@ -43,6 +43,7 @@ public enum LocaleMessage {
 
     INVALID_USAGE("&cUsage: {0}"),
 
+    LIST_HEADER("&aThere are currently &b{0} &aplayers online\n&7&oHover over a server to see the players online"),
     LIST_MESSAGE("&a[{0}] &e{1} player{2} online"),
 
     MESSAGE_SENDER("&b&lme » {0} &7> &o"),
