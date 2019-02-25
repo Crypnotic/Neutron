@@ -22,7 +22,7 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package me.crypnotic.neutron.command;
+package me.crypnotic.neutron.module.command.options;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,12 +32,12 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
 
-import me.crypnotic.neutron.api.command.CommandContext;
-import me.crypnotic.neutron.api.command.CommandWrapper;
+import me.crypnotic.neutron.module.command.CommandContext;
+import me.crypnotic.neutron.module.command.CommandWrapper;
 import me.crypnotic.neutron.module.locale.LocaleMessage;
 import me.crypnotic.neutron.util.Strings;
 
-public class InfoCommand implements CommandWrapper {
+public class InfoCommand extends CommandWrapper {
 
     @Override
     public void handle(CommandSource source, CommandContext context) throws CommandExitException {

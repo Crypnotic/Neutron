@@ -38,6 +38,7 @@ import lombok.Getter;
 import me.crypnotic.neutron.api.INeutronAccessor;
 import me.crypnotic.neutron.api.module.AbstractModule;
 import me.crypnotic.neutron.module.announcement.AnnouncementsModule;
+import me.crypnotic.neutron.module.command.CommandModule;
 import me.crypnotic.neutron.module.locale.LocaleModule;
 import me.crypnotic.neutron.module.serverlist.ServerListModule;
 import me.crypnotic.neutron.util.FileIO;
@@ -68,6 +69,7 @@ public class ModuleManager implements INeutronAccessor {
         }
 
         modules.put(AnnouncementsModule.class, new AnnouncementsModule());
+        modules.put(CommandModule.class, new CommandModule());
         modules.put(LocaleModule.class, new LocaleModule());
         modules.put(ServerListModule.class, new ServerListModule());
 
@@ -127,6 +129,10 @@ public class ModuleManager implements INeutronAccessor {
 
     @Subscribe
     public void onProxyReload(ProxyReloadEvent event) {
+        if (!loadConfig()) {
+            getLogger().warn("Failed to reload config on proxy reload");
+        }
+        
         int enabled = 0;
         for (AbstractModule module : modules.values()) {
             ConfigurationNode node = root.getNode(module.getName());

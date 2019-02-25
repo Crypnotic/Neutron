@@ -22,7 +22,7 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package me.crypnotic.neutron.api.command;
+package me.crypnotic.neutron.module.command;
 
 import java.util.Locale;
 
@@ -30,6 +30,8 @@ import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import me.crypnotic.neutron.api.INeutronAccessor;
 import me.crypnotic.neutron.module.locale.LocaleMessage;
@@ -38,10 +40,17 @@ import me.crypnotic.neutron.module.locale.LocaleModule;
 import me.crypnotic.neutron.util.Strings;
 import net.kyori.text.TextComponent;
 
-public interface CommandWrapper extends Command, INeutronAccessor {
+public abstract class CommandWrapper implements Command, INeutronAccessor {
+
+    @Getter
+    @Setter
+    private boolean enabled;
+    @Getter
+    @Setter
+    private String[] aliases;
 
     @Override
-    default void execute(CommandSource source, String[] args) {
+    public void execute(CommandSource source, String[] args) {
         try {
             handle(source, new CommandContext(args));
         } catch (CommandExitException exception) {
@@ -50,32 +59,32 @@ public interface CommandWrapper extends Command, INeutronAccessor {
     }
 
     @SneakyThrows
-    default void assertUsage(CommandSource source, boolean assertion) {
+    public void assertUsage(CommandSource source, boolean assertion) {
         assertCustom(source, assertion, LocaleMessage.INVALID_USAGE, getUsage());
     }
 
     @SneakyThrows
-    default void assertPlayer(CommandSource source, LocaleMessage message, Object... values) {
+    public void assertPlayer(CommandSource source, LocaleMessage message, Object... values) {
         assertCustom(source, source instanceof Player, message, values);
     }
 
     @SneakyThrows
-    default void assertNull(CommandSource source, Object value, LocaleMessage message, Object... values) {
+    public void assertNull(CommandSource source, Object value, LocaleMessage message, Object... values) {
         assertCustom(source, value == null, message, values);
     }
 
     @SneakyThrows
-    default void assertNotNull(CommandSource source, Object value, LocaleMessage message, Object... values) {
+    public void assertNotNull(CommandSource source, Object value, LocaleMessage message, Object... values) {
         assertCustom(source, value != null, message, values);
     }
 
     @SneakyThrows
-    default void assertPermission(CommandSource source, String permission) {
+    public void assertPermission(CommandSource source, String permission) {
         assertCustom(source, source.hasPermission(permission), LocaleMessage.NO_PERMISSION);
     }
 
     @SneakyThrows
-    default void assertCustom(CommandSource source, boolean assertion, LocaleMessage message, Object... values) {
+    public void assertCustom(CommandSource source, boolean assertion, LocaleMessage message, Object... values) {
         if (!assertion) {
             message(source, message, values);
 
@@ -83,11 +92,11 @@ public interface CommandWrapper extends Command, INeutronAccessor {
         }
     }
 
-    default void message(CommandSource source, LocaleMessage message, Object... values) {
+    public void message(CommandSource source, LocaleMessage message, Object... values) {
         source.sendMessage(getMessage(source, message, values));
     }
 
-    default TextComponent getMessage(CommandSource source, LocaleMessage message, Object... values) {
+    public TextComponent getMessage(CommandSource source, LocaleMessage message, Object... values) {
         LocaleModule module = getModuleManager().get(LocaleModule.class);
         if (module.isEnabled()) {
             Locale locale = module.getDefaultLocale();
@@ -103,9 +112,9 @@ public interface CommandWrapper extends Command, INeutronAccessor {
         return Strings.formatAndColor(message.getDefaultMessage(), values);
     }
 
-    void handle(CommandSource source, CommandContext context) throws CommandExitException;
+    public abstract void handle(CommandSource source, CommandContext context) throws CommandExitException;
 
-    String getUsage();
+    public abstract String getUsage();
 
     public class CommandExitException extends Exception {
         private static final long serialVersionUID = -1299193476106186693L;

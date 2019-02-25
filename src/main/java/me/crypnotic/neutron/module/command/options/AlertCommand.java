@@ -22,48 +22,33 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package me.crypnotic.neutron.command;
-
-import java.util.Collection;
-import java.util.stream.Collectors;
+package me.crypnotic.neutron.module.command.options;
 
 import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.server.RegisteredServer;
-import com.velocitypowered.api.proxy.server.ServerInfo;
 
-import me.crypnotic.neutron.api.command.CommandContext;
-import me.crypnotic.neutron.api.command.CommandWrapper;
+import lombok.RequiredArgsConstructor;
+import me.crypnotic.neutron.module.command.CommandContext;
+import me.crypnotic.neutron.module.command.CommandWrapper;
 import me.crypnotic.neutron.module.locale.LocaleMessage;
-import net.kyori.text.TextComponent;
-import net.kyori.text.event.ClickEvent;
-import net.kyori.text.event.HoverEvent;
 
-public class ListCommand implements CommandWrapper {
+@RequiredArgsConstructor
+public class AlertCommand extends CommandWrapper {
 
     @Override
     public void handle(CommandSource source, CommandContext context) throws CommandExitException {
-        assertPermission(source, "neutron.command.glist");
+        assertPermission(source, "neutron.command.alert");
+        assertUsage(source, context.size() > 0);
 
-        message(source, LocaleMessage.LIST_HEADER, getProxy().getPlayerCount());
-        
-        for (RegisteredServer server : getProxy().getAllServers()) {
-            ServerInfo info = server.getServerInfo();
-            Collection<Player> players = server.getPlayersConnected();
+        String message = context.join(" ");
 
-            String playerString = players.stream().map(Player::getUsername).sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.joining(", "));
+        getProxy().getAllPlayers().forEach(target -> message(target, LocaleMessage.ALERT_MESSAGE, message));
 
-            TextComponent message = getMessage(source, LocaleMessage.LIST_MESSAGE, info.getName(), players.size());
-
-            message = message.hoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.of(playerString)));
-            message = message.clickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/server " + info.getName()));
-
-            source.sendMessage(message);
-        }
+        /* Log to console since ProxyServer#broadcast doesn't do so */
+        message(getProxy().getConsoleCommandSource(), LocaleMessage.ALERT_MESSAGE, message);
     }
 
     @Override
     public String getUsage() {
-        return "/glist";
+        return "/alert (message)";
     }
 }

@@ -29,7 +29,6 @@ import java.nio.file.Path;
 import org.slf4j.Logger;
 
 import com.google.inject.Inject;
-import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
@@ -38,12 +37,6 @@ import com.velocitypowered.api.proxy.ProxyServer;
 
 import lombok.Getter;
 import me.crypnotic.neutron.api.Neutron;
-import me.crypnotic.neutron.command.AlertCommand;
-import me.crypnotic.neutron.command.FindCommand;
-import me.crypnotic.neutron.command.InfoCommand;
-import me.crypnotic.neutron.command.ListCommand;
-import me.crypnotic.neutron.command.MessageCommand;
-import me.crypnotic.neutron.command.SendCommand;
 import me.crypnotic.neutron.manager.ModuleManager;
 
 @Plugin(id = "@ID@", name = "@NAME@", version = "@VERSION@", description = "@DESCRIPTION@")
@@ -73,18 +66,5 @@ public class NeutronPlugin {
             logger.warn("Failed to initialize ModuleManager");
             return;
         }
-
-        registerCommands();
-    }
-
-    private void registerCommands() {
-        CommandManager commandManager = proxy.getCommandManager();
-
-        commandManager.register(new AlertCommand(), "alert");
-        commandManager.register(new FindCommand(), "find");
-        commandManager.register(new InfoCommand(), "info");
-        commandManager.register(new ListCommand(), "glist");
-        commandManager.register(new MessageCommand(), "message", "msg", "tell", "whisper");
-        commandManager.register(new SendCommand(), "send");
     }
 }

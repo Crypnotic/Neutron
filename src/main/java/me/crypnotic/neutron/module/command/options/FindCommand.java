@@ -22,7 +22,7 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package me.crypnotic.neutron.command;
+package me.crypnotic.neutron.module.command.options;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,36 +30,28 @@ import java.util.stream.Collectors;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ServerConnection;
 
-import me.crypnotic.neutron.api.command.CommandContext;
-import me.crypnotic.neutron.api.command.CommandWrapper;
+import me.crypnotic.neutron.module.command.CommandContext;
+import me.crypnotic.neutron.module.command.CommandWrapper;
 import me.crypnotic.neutron.module.locale.LocaleMessage;
 import me.crypnotic.neutron.util.Strings;
-import net.kyori.text.TextComponent;
 
-public class MessageCommand implements CommandWrapper {
+public class FindCommand extends CommandWrapper {
 
     @Override
     public void handle(CommandSource source, CommandContext context) throws CommandExitException {
-        assertPermission(source, "neutron.command.message");
-        assertUsage(source, context.size() > 1);
+        assertPermission(source, "neutron.command.find");
+        assertUsage(source, context.size() > 0);
 
         Player target = getProxy().getPlayer(context.get(0)).orElse(null);
         assertNotNull(source, target, LocaleMessage.UNKNOWN_PLAYER, context.get(0));
 
-        String sourceName = source instanceof Player ? ((Player) source).getUsername() : "Console";
+        ServerConnection server = target.getCurrentServer().get();
+        /* We'll consider this offline as the Player is in a limbo state */
+        assertNotNull(source, server, LocaleMessage.PLAYER_OFFLINE, context.get(0));
 
-        TextComponent content = TextComponent.of(context.join(" ", 1));
-        TextComponent sourceMessage = getMessage(source, LocaleMessage.MESSAGE_SENDER, target.getUsername()).append(content);
-        TextComponent targetMessage = getMessage(target, LocaleMessage.MESSAGE_RECEIVER, sourceName).append(content);
-
-        source.sendMessage(sourceMessage);
-        target.sendMessage(targetMessage);
-    }
-
-    @Override
-    public String getUsage() {
-        return "/message (player) (message)";
+        message(source, LocaleMessage.FIND_MESSAGE, target.getUsername(), server.getServerInfo().getName());
     }
 
     @Override
@@ -68,5 +60,10 @@ public class MessageCommand implements CommandWrapper {
             return Strings.matchPlayer(getProxy(), args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
         }
         return Arrays.asList();
+    }
+
+    @Override
+    public String getUsage() {
+        return "/find (player)";
     }
 }

@@ -22,7 +22,7 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package me.crypnotic.neutron.api.command;
+package me.crypnotic.neutron.module.command;
 
 import lombok.RequiredArgsConstructor;
 

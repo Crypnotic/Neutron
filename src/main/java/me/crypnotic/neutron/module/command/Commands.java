@@ -22,33 +22,30 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package me.crypnotic.neutron.command;
+package me.crypnotic.neutron.module.command;
 
-import com.velocitypowered.api.command.CommandSource;
+import java.util.function.Supplier;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import me.crypnotic.neutron.api.command.CommandContext;
-import me.crypnotic.neutron.api.command.CommandWrapper;
-import me.crypnotic.neutron.module.locale.LocaleMessage;
+import me.crypnotic.neutron.module.command.options.AlertCommand;
+import me.crypnotic.neutron.module.command.options.FindCommand;
+import me.crypnotic.neutron.module.command.options.GlistCommand;
+import me.crypnotic.neutron.module.command.options.InfoCommand;
+import me.crypnotic.neutron.module.command.options.MessageCommand;
+import me.crypnotic.neutron.module.command.options.SendCommand;
 
 @RequiredArgsConstructor
-public class AlertCommand implements CommandWrapper {
+public enum Commands {
+    ALERT("alert", AlertCommand::new),
+    FIND("find", FindCommand::new),
+    INFO("info", InfoCommand::new),
+    GLIST("glist", GlistCommand::new),
+    MESSAGE("message", MessageCommand::new),
+    SEND("send", SendCommand::new);
 
-    @Override
-    public void handle(CommandSource source, CommandContext context) throws CommandExitException {
-        assertPermission(source, "neutron.command.alert");
-        assertUsage(source, context.size() > 0);
-
-        String message = context.join(" ");
-
-        getProxy().getAllPlayers().forEach(target -> message(target, LocaleMessage.ALERT_MESSAGE, message));
-
-        /* Log to console since ProxyServer#broadcast doesn't do so */
-        message(getProxy().getConsoleCommandSource(), LocaleMessage.ALERT_MESSAGE, message);
-    }
-
-    @Override
-    public String getUsage() {
-        return "/alert (message)";
-    }
+    @Getter
+    private final String key;
+    @Getter
+    private final Supplier<CommandWrapper> supplier;
 }
