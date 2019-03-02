@@ -1,6 +1,7 @@
 plugins {
  	id 'net.kyori.blossom' version '1.1.0'
 	id 'com.github.johnrengelman.shadow' version '4.0.4'
+	id 'maven-publish'
 	id 'java'
 }
 
@@ -19,6 +20,8 @@ repositories {
         url = 'https://repo.spongepowered.org/maven'
     }
 }
+
+defaultTasks("clean", "build", "shadowJar")
 
 dependencies {
 	compile ('org.spongepowered:configurate-hocon:3.6') {
@@ -39,3 +42,31 @@ blossom {
 	replaceToken '@VERSION@', version
 	replaceToken '@DESCRIPTION@', description
 }
+
+task deploy {
+
+} 
+
+publishing {
+	publications {
+	    maven(MavenPublication) {
+			components.java
+	    }
+	}
+	
+	repositories {
+		def releasesRepoUrl = System.getenv('releasesRepoUrl')
+		def snapshotsRepoUrl = System.getenv('snapshotsRepoUrl')
+		    
+		def url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+		
+		def mavenUsername = System.getenv('mavenUsername')
+		def mavenPassword = System.getenv('mavenPassword')
+		if (mavenUsername != null && mavenPassword != null) {
+			credentials {
+				username = mavenUsername
+				password = mavenPassword
+			}
+		}
+	}
+} 
