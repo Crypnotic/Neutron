@@ -37,11 +37,9 @@ import lombok.Getter;
 import me.crypnotic.neutron.api.module.AbstractModule;
 import me.crypnotic.neutron.module.serverlist.ServerListConfig.PlayerCount;
 import me.crypnotic.neutron.util.ConfigHelper;
-import ninja.leaping.configurate.ConfigurationNode;
 
 public class ServerListModule extends AbstractModule {
 
-    private ConfigurationNode root;
     @Getter
     private ServerListConfig config;
 
@@ -51,16 +49,15 @@ public class ServerListModule extends AbstractModule {
 
     @Override
     public boolean init() {
-        this.root = getModuleManager().getRoot().getNode(getName());
-        this.config = ConfigHelper.getSerializable(root, new ServerListConfig());
+        this.config = ConfigHelper.getSerializable(getRootNode(), new ServerListConfig());
         if (config == null) {
             return false;
         }
 
-        getProxy().getEventManager().register(getPlugin(), new ServerListHandler(this, config));
+        getNeutron().getProxy().getEventManager().register(getNeutron(), new ServerListHandler(this, config));
 
         if (config.getPlayerCount().getAction() == PlayerCount.PlayerCountAction.PING) {
-            this.pingTask = getProxy().getScheduler().buildTask(getPlugin(), new PingTask()).repeat(5, TimeUnit.MINUTES).schedule();
+            this.pingTask = getNeutron().getProxy().getScheduler().buildTask(getNeutron(), new PingTask()).repeat(5, TimeUnit.MINUTES).schedule();
         }
 
         return true;
@@ -91,7 +88,7 @@ public class ServerListModule extends AbstractModule {
 
         @Override
         public void run() {
-            for (RegisteredServer server : getProxy().getAllServers()) {
+            for (RegisteredServer server : getNeutron().getProxy().getAllServers()) {
                 try {
                     ServerPing ping = server.ping().get();
                     Optional<Players> players = ping.getPlayers();

@@ -87,7 +87,7 @@ public class Strings {
         if (exactMatch.isPresent()) {
             return Collections.singleton(exactMatch.get());
         }
-        
+
         return matchPartial(proxy.getAllServers(), server -> server.getServerInfo().getName(), partialName);
     }
 

@@ -24,17 +24,13 @@
 */
 package me.crypnotic.neutron.api.module;
 
-import java.util.List;
-
-import com.google.common.reflect.TypeToken;
-
 import lombok.Getter;
 import lombok.Setter;
-import me.crypnotic.neutron.api.INeutronAccessor;
+import me.crypnotic.neutron.NeutronPlugin;
+import me.crypnotic.neutron.api.Neutron;
 import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
-public abstract class AbstractModule implements INeutronAccessor {
+public abstract class AbstractModule {
 
     @Getter
     @Setter
@@ -48,35 +44,11 @@ public abstract class AbstractModule implements INeutronAccessor {
 
     public abstract String getName();
 
-    public <T> T getOrSet(ConfigurationNode node, String key, T fallback, Class<T> type) {
-        ConfigurationNode value = node.getNode(key);
-        if (value.isVirtual()) {
-            value.setValue(fallback);
-            return fallback;
-        }
-
-        try {
-            return value.getValue(TypeToken.of(type));
-        } catch (ObjectMappingException exception) {
-            exception.printStackTrace();
-
-            return fallback;
-        }
+    public NeutronPlugin getNeutron() {
+        return Neutron.getNeutron();
     }
 
-    public <T> List<T> getOrSetList(ConfigurationNode node, String key, List<T> fallback, Class<T> type) {
-        ConfigurationNode value = node.getNode(key);
-        if (value.isVirtual()) {
-            value.setValue(fallback);
-            return fallback;
-        }
-
-        try {
-            return value.getList(TypeToken.of(type));
-        } catch (ObjectMappingException exception) {
-            exception.printStackTrace();
-
-            return fallback;
-        }
+    public ConfigurationNode getRootNode() {
+        return getNeutron().getModuleManager().getRoot().getNode(getName());
     }
 }

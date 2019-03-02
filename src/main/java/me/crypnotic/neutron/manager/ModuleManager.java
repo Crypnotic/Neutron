@@ -35,7 +35,8 @@ import com.velocitypowered.api.event.proxy.ProxyReloadEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 
 import lombok.Getter;
-import me.crypnotic.neutron.api.INeutronAccessor;
+import lombok.RequiredArgsConstructor;
+import me.crypnotic.neutron.NeutronPlugin;
 import me.crypnotic.neutron.api.module.AbstractModule;
 import me.crypnotic.neutron.module.announcement.AnnouncementsModule;
 import me.crypnotic.neutron.module.command.CommandModule;
@@ -52,7 +53,10 @@ import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 
-public class ModuleManager implements INeutronAccessor {
+@RequiredArgsConstructor
+public class ModuleManager {
+
+    private final NeutronPlugin neutron;
 
     @Getter
     private File file;
@@ -79,7 +83,7 @@ public class ModuleManager implements INeutronAccessor {
         for (AbstractModule module : modules.values()) {
             ConfigurationNode node = root.getNode(module.getName());
             if (node.isVirtual()) {
-                getLogger().warn("Failed to load module: " + module.getName());
+                neutron.getLogger().warn("Failed to load module: " + module.getName());
                 continue;
             }
 
@@ -90,7 +94,7 @@ public class ModuleManager implements INeutronAccessor {
 
                     continue;
                 } else {
-                    getLogger().warn("Module failed to initialize: " + module.getName());
+                    neutron.getLogger().warn("Module failed to initialize: " + module.getName());
 
                     module.setEnabled(false);
 
@@ -99,9 +103,9 @@ public class ModuleManager implements INeutronAccessor {
             }
         }
 
-        getProxy().getEventManager().register(getPlugin(), this);
+        neutron.getProxy().getEventManager().register(neutron, this);
 
-        getLogger().info(String.format("Modules loaded: %d (enabled: %d)", modules.size(), enabled));
+        neutron.getLogger().info(String.format("Modules loaded: %d (enabled: %d)", modules.size(), enabled));
 
         return true;
     }
@@ -130,14 +134,14 @@ public class ModuleManager implements INeutronAccessor {
     @Subscribe
     public void onProxyReload(ProxyReloadEvent event) {
         if (!loadConfig()) {
-            getLogger().warn("Failed to reload config on proxy reload");
+            neutron.getLogger().warn("Failed to reload config on proxy reload");
         }
-        
+
         int enabled = 0;
         for (AbstractModule module : modules.values()) {
             ConfigurationNode node = root.getNode(module.getName());
             if (node.isVirtual()) {
-                getLogger().warn("Failed to reload module: " + module.getName());
+                neutron.getLogger().warn("Failed to reload module: " + module.getName());
                 continue;
             }
 
@@ -148,7 +152,7 @@ public class ModuleManager implements INeutronAccessor {
 
                     continue;
                 } else {
-                    getLogger().warn("Module failed to reload: " + module.getName());
+                    neutron.getLogger().warn("Module failed to reload: " + module.getName());
 
                     module.setEnabled(false);
 
@@ -157,19 +161,19 @@ public class ModuleManager implements INeutronAccessor {
             }
         }
 
-        getLogger().info(String.format("Modules reloaded: %d (enabled: %d)", modules.size(), enabled));
+        neutron.getLogger().info(String.format("Modules reloaded: %d (enabled: %d)", modules.size(), enabled));
     }
 
     @Subscribe
     public void onProxyShutdown(ProxyShutdownEvent event) {
-        getLogger().info("Shutting down active modules...");
+        neutron.getLogger().info("Shutting down active modules...");
 
         modules.values().stream().filter(AbstractModule::isEnabled).forEach(AbstractModule::shutdown);
     }
 
     private boolean loadConfig() {
         try {
-            this.file = FileIO.getOrCreate(getDataFolderPath(), "config.conf");
+            this.file = FileIO.getOrCreate(neutron.getDataFolderPath(), "config.conf");
             this.loader = HoconConfigurationLoader.builder().setDefaultOptions(ConfigurationOptions.defaults().setShouldCopyDefaults(true))
                     .setFile(file).build();
             this.root = loader.load();

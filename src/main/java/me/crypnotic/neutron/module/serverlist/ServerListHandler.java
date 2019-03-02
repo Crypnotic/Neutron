@@ -49,7 +49,7 @@ public class ServerListHandler {
 
         ServerPing original = event.getPing();
 
-        int playerCount = module.getProxy().getPlayerCount();
+        int playerCount = module.getNeutron().getProxy().getPlayerCount();
 
         Builder builder = ServerPing.builder();
 
@@ -78,8 +78,8 @@ public class ServerListHandler {
             builder.samplePlayers(Strings.toSamplePlayerArray(config.getServerPreview().getMessages()));
             break;
         case PLAYERS:
-            builder.samplePlayers(
-                    Strings.toSamplePlayerArray(module.getProxy().getAllPlayers().stream().map(Player::getUsername).collect(Collectors.toList())));
+            builder.samplePlayers(Strings.toSamplePlayerArray(
+                    module.getNeutron().getProxy().getAllPlayers().stream().map(Player::getUsername).collect(Collectors.toList())));
             break;
         case EMPTY:
             break;

@@ -33,14 +33,15 @@ import com.velocitypowered.api.proxy.Player;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import me.crypnotic.neutron.api.INeutronAccessor;
+import me.crypnotic.neutron.NeutronPlugin;
+import me.crypnotic.neutron.api.Neutron;
 import me.crypnotic.neutron.module.locale.LocaleMessage;
 import me.crypnotic.neutron.module.locale.LocaleMessageTable;
 import me.crypnotic.neutron.module.locale.LocaleModule;
 import me.crypnotic.neutron.util.Strings;
 import net.kyori.text.TextComponent;
 
-public abstract class CommandWrapper implements Command, INeutronAccessor {
+public abstract class CommandWrapper implements Command {
 
     @Getter
     @Setter
@@ -97,7 +98,7 @@ public abstract class CommandWrapper implements Command, INeutronAccessor {
     }
 
     public TextComponent getMessage(CommandSource source, LocaleMessage message, Object... values) {
-        LocaleModule module = getModuleManager().get(LocaleModule.class);
+        LocaleModule module = getNeutron().getModuleManager().get(LocaleModule.class);
         if (module.isEnabled()) {
             Locale locale = module.getDefaultLocale();
             if (source instanceof Player) {
@@ -118,5 +119,9 @@ public abstract class CommandWrapper implements Command, INeutronAccessor {
 
     public class CommandExitException extends Exception {
         private static final long serialVersionUID = -1299193476106186693L;
+    }
+
+    public NeutronPlugin getNeutron() {
+        return Neutron.getNeutron();
     }
 }

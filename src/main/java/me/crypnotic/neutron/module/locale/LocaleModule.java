@@ -38,7 +38,6 @@ import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
 public class LocaleModule extends AbstractModule {
 
-    private ConfigurationNode root;
     private LocaleConfig config;
     private File folder;
     private Map<Locale, LocaleMessageTable> locales = new HashMap<Locale, LocaleMessageTable>();
@@ -47,13 +46,12 @@ public class LocaleModule extends AbstractModule {
 
     @Override
     public boolean init() {
-        this.root = getModuleManager().getRoot().getNode(getName());
-        this.config = ConfigHelper.getSerializable(root, new LocaleConfig());
+        this.config = ConfigHelper.getSerializable(getRootNode(), new LocaleConfig());
         if (config == null) {
             return false;
         }
 
-        this.folder = FileIO.getOrCreateDirectory(getDataFolderPath(), "locales");
+        this.folder = FileIO.getOrCreateDirectory(getNeutron().getDataFolderPath(), "locales");
 
         loadDefaultLocale();
 
@@ -61,7 +59,7 @@ public class LocaleModule extends AbstractModule {
             loadMessageTable(file);
         }
 
-        getLogger().info("Locales loaded: " + locales.size());
+        getNeutron().getLogger().info("Locales loaded: " + locales.size());
 
         return true;
     }
@@ -84,16 +82,16 @@ public class LocaleModule extends AbstractModule {
             File defaultLocaleFile = FileIO.getOrCreateLocale(folder.toPath(), fallbackLocaleName + ".conf");
             if (defaultLocaleFile != null) {
                 loadMessageTable(defaultLocaleFile);
-                getLogger().info("Loaded fallback locale: " + fallbackLocaleName);
+                getNeutron().getLogger().info("Loaded fallback locale: " + fallbackLocaleName);
 
                 return;
             } else {
-                getLogger().warn("Could not find file for locale: " + fallbackLocaleName);
-                getLogger().warn("Falling back to en_US");
+                getNeutron().getLogger().warn("Could not find file for locale: " + fallbackLocaleName);
+                getNeutron().getLogger().warn("Falling back to en_US");
             }
         } else {
-            getLogger().warn("Unknown fallback locale specified: " + fallbackLocaleName);
-            getLogger().warn("Falling back to en_US");
+            getNeutron().getLogger().warn("Unknown fallback locale specified: " + fallbackLocaleName);
+            getNeutron().getLogger().warn("Falling back to en_US");
         }
 
         this.defaultLocale = Locale.forLanguageTag("en_US");
@@ -105,7 +103,7 @@ public class LocaleModule extends AbstractModule {
             String name = file.getName().split("\\.")[0];
             Locale locale = Locale.forLanguageTag(name);
             if (locale == null) {
-                getLogger().warn("Unknown locale attempted to load: " + name);
+                getNeutron().getLogger().warn("Unknown locale attempted to load: " + name);
                 return;
             }
 

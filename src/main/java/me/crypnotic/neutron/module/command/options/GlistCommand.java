@@ -45,9 +45,9 @@ public class GlistCommand extends CommandWrapper {
     public void handle(CommandSource source, CommandContext context) throws CommandExitException {
         assertPermission(source, "neutron.command.glist");
 
-        message(source, LocaleMessage.LIST_HEADER, getProxy().getPlayerCount());
+        message(source, LocaleMessage.LIST_HEADER, getNeutron().getProxy().getPlayerCount());
 
-        for (RegisteredServer server : getProxy().getAllServers()) {
+        for (RegisteredServer server : getNeutron().getProxy().getAllServers()) {
             ServerInfo info = server.getServerInfo();
             Collection<Player> players = server.getPlayersConnected();
 

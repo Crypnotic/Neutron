@@ -34,23 +34,20 @@ import ninja.leaping.configurate.ConfigurationNode;
 
 public class CommandModule extends AbstractModule {
 
-    private ConfigurationNode root;
     private Map<Commands, CommandWrapper> commands = new HashMap<Commands, CommandWrapper>();
 
     @Override
     public boolean init() {
-        this.root = getModuleManager().getRoot().getNode(getName());
-
-        ConfigurationNode options = root.getNode("options");
+        ConfigurationNode options = getRootNode().getNode("options");
         if (options.isVirtual()) {
-            getLogger().warn("No config entry found for command module options");
+            getNeutron().getLogger().warn("No config entry found for command module options");
             return false;
         }
 
         for (Commands spec : Commands.values()) {
             ConfigurationNode node = options.getNode(spec.getKey());
             if (node.isVirtual()) {
-                getLogger().warn("No config entry for command: " + spec.getKey());
+                getNeutron().getLogger().warn("No config entry for command: " + spec.getKey());
                 continue;
             }
 
@@ -62,7 +59,7 @@ public class CommandModule extends AbstractModule {
             wrapper.setAliases(aliases.toArray(new String[aliases.size()]));
 
             if (wrapper.isEnabled()) {
-                getProxy().getCommandManager().register(wrapper, wrapper.getAliases());
+                getNeutron().getProxy().getCommandManager().register(wrapper, wrapper.getAliases());
             }
 
             commands.put(spec, wrapper);
@@ -78,7 +75,8 @@ public class CommandModule extends AbstractModule {
 
     @Override
     public boolean shutdown() {
-        commands.values().stream().map(CommandWrapper::getAliases).flatMap(Arrays::stream).forEach(getProxy().getCommandManager()::unregister);
+        commands.values().stream().map(CommandWrapper::getAliases).flatMap(Arrays::stream)
+                .forEach(getNeutron().getProxy().getCommandManager()::unregister);
 
         commands.clear();
 

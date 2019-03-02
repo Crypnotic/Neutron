@@ -41,10 +41,10 @@ public class AlertCommand extends CommandWrapper {
 
         String message = context.join(" ");
 
-        getProxy().getAllPlayers().forEach(target -> message(target, LocaleMessage.ALERT_MESSAGE, message));
+        getNeutron().getProxy().getAllPlayers().forEach(target -> message(target, LocaleMessage.ALERT_MESSAGE, message));
 
         /* Log to console since ProxyServer#broadcast doesn't do so */
-        message(getProxy().getConsoleCommandSource(), LocaleMessage.ALERT_MESSAGE, message);
+        message(getNeutron().getProxy().getConsoleCommandSource(), LocaleMessage.ALERT_MESSAGE, message);
     }
 
     @Override

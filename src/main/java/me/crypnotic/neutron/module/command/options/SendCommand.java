@@ -45,7 +45,7 @@ public class SendCommand extends CommandWrapper {
         assertPermission(source, "neutron.command.send");
         assertUsage(source, context.size() > 1);
 
-        RegisteredServer targetServer = getProxy().getServer(context.get(1).toLowerCase()).orElse(null);
+        RegisteredServer targetServer = getNeutron().getProxy().getServer(context.get(1).toLowerCase()).orElse(null);
         assertNotNull(source, targetServer, LocaleMessage.UNKNOWN_SERVER, context.get(1));
 
         switch (context.get(0).toLowerCase()) {
@@ -64,7 +64,7 @@ public class SendCommand extends CommandWrapper {
             message(player, LocaleMessage.SEND_CURRENT, targetServer.getServerInfo().getName());
             break;
         case "all":
-            getProxy().getAllPlayers().forEach(targetPlayer -> {
+            getNeutron().getProxy().getAllPlayers().forEach(targetPlayer -> {
                 targetPlayer.createConnectionRequest(targetServer).fireAndForget();
                 message(targetPlayer, LocaleMessage.SEND_MESSAGE, targetServer.getServerInfo().getName());
             });
@@ -72,7 +72,7 @@ public class SendCommand extends CommandWrapper {
             message(source, LocaleMessage.SEND_ALL, targetServer.getServerInfo().getName());
             break;
         default:
-            Player targetPlayer = getProxy().getPlayer(context.get(0)).orElse(null);
+            Player targetPlayer = getNeutron().getProxy().getPlayer(context.get(0)).orElse(null);
             assertNotNull(source, targetPlayer, LocaleMessage.UNKNOWN_PLAYER, context.get(0));
 
             targetPlayer.createConnectionRequest(targetServer).fireAndForget();
@@ -85,7 +85,8 @@ public class SendCommand extends CommandWrapper {
     @Override
     public List<String> suggest(CommandSource source, String[] args) {
         if (args.length == 1) {
-            List<String> result = Strings.matchPlayer(getProxy(), args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
+            List<String> result = Strings.matchPlayer(getNeutron().getProxy(), args[0]).stream().map(Player::getUsername)
+                    .collect(Collectors.toList());
 
             /* Inject `current`/`all` subcommands */
             result.add("current");
@@ -93,7 +94,8 @@ public class SendCommand extends CommandWrapper {
 
             return result;
         } else if (args.length == 2) {
-            return Strings.matchServer(getProxy(), args[1]).stream().map(server -> server.getServerInfo().getName()).collect(Collectors.toList());
+            return Strings.matchServer(getNeutron().getProxy(), args[1]).stream().map(server -> server.getServerInfo().getName())
+                    .collect(Collectors.toList());
         }
         return Arrays.asList();
     }

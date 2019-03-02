@@ -56,12 +56,14 @@ public class NeutronPlugin {
     @Getter
     private ModuleManager moduleManager;
 
+    public NeutronPlugin() {
+        Neutron.setNeutron(this);
+        
+        this.moduleManager = new ModuleManager(this);
+    }
+
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
-        Neutron.setNeutron(this);
-
-        this.moduleManager = new ModuleManager();
-
         if (!moduleManager.init()) {
             logger.warn("Failed to initialize ModuleManager");
             return;

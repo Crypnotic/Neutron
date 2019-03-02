@@ -44,7 +44,7 @@ public class MessageCommand extends CommandWrapper {
         assertPermission(source, "neutron.command.message");
         assertUsage(source, context.size() > 1);
 
-        Player target = getProxy().getPlayer(context.get(0)).orElse(null);
+        Player target = getNeutron().getProxy().getPlayer(context.get(0)).orElse(null);
         assertNotNull(source, target, LocaleMessage.UNKNOWN_PLAYER, context.get(0));
 
         String sourceName = source instanceof Player ? ((Player) source).getUsername() : "Console";
@@ -65,7 +65,7 @@ public class MessageCommand extends CommandWrapper {
     @Override
     public List<String> suggest(CommandSource source, String[] args) {
         if (args.length == 1) {
-            return Strings.matchPlayer(getProxy(), args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
+            return Strings.matchPlayer(getNeutron().getProxy(), args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
         }
         return Arrays.asList();
     }

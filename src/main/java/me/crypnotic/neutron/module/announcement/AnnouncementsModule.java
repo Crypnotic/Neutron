@@ -46,7 +46,7 @@ public class AnnouncementsModule extends AbstractModule {
 
     public boolean init() {
         try {
-            this.file = FileIO.getOrCreate(getDataFolderPath(), "announcements.conf");
+            this.file = FileIO.getOrCreate(getNeutron().getDataFolderPath(), "announcements.conf");
             this.loader = HoconConfigurationLoader.builder().setFile(file).build();
             this.root = loader.load();
         } catch (IOException exception) {
@@ -58,7 +58,7 @@ public class AnnouncementsModule extends AbstractModule {
         for (ConfigurationNode node : root.getChildrenMap().values()) {
             String id = node.getKey().toString();
             if (announcements.containsKey(id)) {
-                getLogger().warn("An announcement list has already been defined with the id: " + id);
+                getNeutron().getLogger().warn("An announcement list has already been defined with the id: " + id);
                 continue;
             }
 
@@ -66,16 +66,16 @@ public class AnnouncementsModule extends AbstractModule {
             if (announcement != null) {
                 announcements.put(id, announcement);
             } else {
-                getLogger().warn("Failed to load announcement list: " + id);
+                getNeutron().getLogger().warn("Failed to load announcement list: " + id);
             }
 
-            ScheduledTask task = getProxy().getScheduler().buildTask(getPlugin(), new AnnouncementsTask(getPlugin(), announcement))
+            ScheduledTask task = getNeutron().getProxy().getScheduler().buildTask(getNeutron(), new AnnouncementsTask(getNeutron(), announcement))
                     .repeat(announcement.getInterval(), TimeUnit.SECONDS).schedule();
 
             announcement.setTask(task);
         }
 
-        getLogger().info("Announcements loaded: " + announcements.size());
+        getNeutron().getLogger().info("Announcements loaded: " + announcements.size());
 
         return true;
     }
