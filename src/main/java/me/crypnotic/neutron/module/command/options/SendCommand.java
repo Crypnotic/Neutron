@@ -36,7 +36,6 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 import me.crypnotic.neutron.module.command.CommandContext;
 import me.crypnotic.neutron.module.command.CommandWrapper;
 import me.crypnotic.neutron.module.locale.LocaleMessage;
-import me.crypnotic.neutron.util.Strings;
 
 public class SendCommand extends CommandWrapper {
 
@@ -85,8 +84,7 @@ public class SendCommand extends CommandWrapper {
     @Override
     public List<String> suggest(CommandSource source, String[] args) {
         if (args.length == 1) {
-            List<String> result = Strings.matchPlayer(getNeutron().getProxy(), args[0]).stream().map(Player::getUsername)
-                    .collect(Collectors.toList());
+            List<String> result = getNeutron().getProxy().matchPlayer(args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
 
             /* Inject `current`/`all` subcommands */
             result.add("current");
@@ -94,8 +92,7 @@ public class SendCommand extends CommandWrapper {
 
             return result;
         } else if (args.length == 2) {
-            return Strings.matchServer(getNeutron().getProxy(), args[1]).stream().map(server -> server.getServerInfo().getName())
-                    .collect(Collectors.toList());
+            return getNeutron().getProxy().matchServer(args[0]).stream().map(s -> s.getServerInfo().getName()).collect(Collectors.toList());
         }
         return Arrays.asList();
     }

@@ -24,17 +24,9 @@
 */
 package me.crypnotic.neutron.util;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ProxyServer;
-import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerPing.SamplePlayer;
 
 import net.kyori.text.TextComponent;
@@ -61,42 +53,6 @@ public class Strings {
 
     public static TextComponent formatAndColor(String text, Object... params) {
         return color(format(text, params));
-    }
-
-    public static Collection<Player> matchPlayer(ProxyServer proxy, String partialName) {
-        // A better error message might be nice. This just mimics the previous output
-        if (partialName == null) {
-            throw new NullPointerException("partialName");
-        }
-
-        Optional<Player> exactMatch = proxy.getPlayer(partialName);
-        if (exactMatch.isPresent()) {
-            return Collections.singleton(exactMatch.get());
-        }
-
-        return matchPartial(proxy.getAllPlayers(), Player::getUsername, partialName);
-    }
-
-    public static Collection<RegisteredServer> matchServer(ProxyServer proxy, String partialName) {
-        // A better error message might be nice. This just mimics the previous output
-        if (partialName == null) {
-            throw new NullPointerException("partialName");
-        }
-
-        Optional<RegisteredServer> exactMatch = proxy.getServer(partialName);
-        if (exactMatch.isPresent()) {
-            return Collections.singleton(exactMatch.get());
-        }
-
-        return matchPartial(proxy.getAllServers(), server -> server.getServerInfo().getName(), partialName);
-    }
-
-    public static <T> Collection<T> matchPartial(Collection<T> data, Function<T, String> function, String partialName) {
-        if (partialName == null) {
-            throw new NullPointerException("partialName");
-        }
-
-        return data.stream().filter(d -> function.apply(d).regionMatches(true, 0, partialName, 0, partialName.length())).collect(Collectors.toList());
     }
 
     @SuppressWarnings("deprecation")

@@ -34,7 +34,6 @@ import com.velocitypowered.api.proxy.Player;
 import me.crypnotic.neutron.module.command.CommandContext;
 import me.crypnotic.neutron.module.command.CommandWrapper;
 import me.crypnotic.neutron.module.locale.LocaleMessage;
-import me.crypnotic.neutron.util.Strings;
 import net.kyori.text.TextComponent;
 
 public class MessageCommand extends CommandWrapper {
@@ -65,7 +64,7 @@ public class MessageCommand extends CommandWrapper {
     @Override
     public List<String> suggest(CommandSource source, String[] args) {
         if (args.length == 1) {
-            return Strings.matchPlayer(getNeutron().getProxy(), args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
+            return getNeutron().getProxy().matchPlayer(args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
         }
         return Arrays.asList();
     }
