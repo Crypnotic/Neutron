@@ -55,7 +55,9 @@ public class ServerListHandler {
 
         builder.version(original.getVersion());
         builder.onlinePlayers(playerCount);
-
+        
+        original.getFavicon().ifPresent(builder::favicon);
+        
         builder.description(config.getMotd());
 
         switch (config.getPlayerCount().getAction()) {
