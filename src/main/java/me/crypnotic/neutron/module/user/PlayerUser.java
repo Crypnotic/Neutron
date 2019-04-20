@@ -1,13 +1,10 @@
 package me.crypnotic.neutron.module.user;
 
-import com.google.common.reflect.TypeToken;
 import com.velocitypowered.api.proxy.Player;
 import lombok.RequiredArgsConstructor;
-import me.crypnotic.neutron.api.Neutron;
 import me.crypnotic.neutron.api.user.AbstractUser;
 import me.crypnotic.neutron.util.ConfigHelper;
 import me.crypnotic.neutron.util.FileIO;
-import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
@@ -26,8 +23,7 @@ public class PlayerUser extends AbstractUser<Player> {
 
     private PlayerData data;
 
-    private File file = FileIO.getOrCreate(getNeutron().getDataFolderPath().resolve("users"), uuid.toString() + ".conf");
-    private HoconConfigurationLoader loader = HoconConfigurationLoader.builder().setFile(file).build();
+    private HoconConfigurationLoader loader;
     private CommentedConfigurationNode node;
 
     @Override
@@ -41,6 +37,8 @@ public class PlayerUser extends AbstractUser<Player> {
 
     @Override
     public void load() throws Exception {
+        File file = FileIO.getOrCreate(getNeutron().getDataFolderPath().resolve("users"), uuid.toString() + ".conf");
+        this.loader = HoconConfigurationLoader.builder().setFile(file).build();
         this.node = loader.load();
         this.data = ConfigHelper.getSerializable(node, new PlayerData());
     }
