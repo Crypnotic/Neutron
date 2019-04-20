@@ -26,7 +26,7 @@ public class UserModule extends AbstractModule {
     }
 
     private void initCache() {
-        final int maxSize = getRootNode().getNode("cache", "maxSize").getInt(100);
+        final int maxSize = getRootNode().getNode("cache", "max-size").getInt(100);
         final int expiryMins = getRootNode().getNode("cache", "expiry").getInt(30);
 
         final CacheBuilder<UUID, PlayerUser> builder = CacheBuilder.newBuilder()
