@@ -10,7 +10,7 @@ class PlayerData {
 
     // Persistent data
 
-    @Setting(comment = "Last known username")
+    @Setting(comment = "The player's last known username.")
     private String username;
 
     // Non-persisted data

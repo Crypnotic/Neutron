@@ -25,6 +25,7 @@
 package me.crypnotic.neutron.module.command;
 
 import java.util.Locale;
+import java.util.Optional;
 
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
@@ -35,9 +36,11 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import me.crypnotic.neutron.NeutronPlugin;
 import me.crypnotic.neutron.api.Neutron;
+import me.crypnotic.neutron.api.user.AbstractUser;
 import me.crypnotic.neutron.module.locale.LocaleMessage;
 import me.crypnotic.neutron.module.locale.LocaleMessageTable;
 import me.crypnotic.neutron.module.locale.LocaleModule;
+import me.crypnotic.neutron.module.user.UserModule;
 import me.crypnotic.neutron.util.Strings;
 import net.kyori.text.TextComponent;
 
@@ -111,6 +114,14 @@ public abstract class CommandWrapper implements Command {
             }
         }
         return Strings.formatAndColor(message.getDefaultMessage(), values);
+    }
+
+    public Optional<AbstractUser> getUser(CommandSource source) {
+        UserModule module = getNeutron().getModuleManager().get(UserModule.class);
+        if (module.isEnabled()) {
+            return Optional.ofNullable(module.getUser(source));
+        }
+        return Optional.empty();
     }
 
     public abstract void handle(CommandSource source, CommandContext context) throws CommandExitException;

@@ -27,7 +27,7 @@ public class ConsoleUser extends AbstractUser<ConsoleCommandSource> {
 
     @Override
     public void load() throws Exception {
-        name = root.getNode("name").getString("CONSOLE");
+        name = root.getNode("name").getString("Console");
     }
 
     @Override

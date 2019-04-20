@@ -6,16 +6,12 @@ import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 import me.crypnotic.neutron.api.module.AbstractModule;
 import me.crypnotic.neutron.api.user.AbstractUser;
-import me.crypnotic.neutron.util.FileIO;
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+// TODO: Should the module be responsible solely for storing data?
 public class UserModule extends AbstractModule {
 
     private LoadingCache<UUID, PlayerUser> playerUsers;
