@@ -1,5 +1,6 @@
 package me.crypnotic.neutron.module.user;
 
+import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import lombok.RequiredArgsConstructor;
 import me.crypnotic.neutron.api.user.AbstractUser;
@@ -45,8 +46,11 @@ public class PlayerUser extends AbstractUser<Player> {
 
     @Override
     public void save() throws Exception {
-        node.setValue(data);
-        loader.save(node);
+        node = ConfigHelper.setSerializable(node, data);
+        // If serialization failed, don't delete the user's data
+        if (node != null) {
+            loader.save(node);
+        }
     }
 
     @Override
