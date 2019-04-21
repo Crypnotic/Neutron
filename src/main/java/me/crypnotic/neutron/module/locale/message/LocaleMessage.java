@@ -46,11 +46,13 @@ public enum LocaleMessage {
     LIST_HEADER("&aThere are currently &b{0} &aplayers online\n&7&oHover over a server to see the players online"),
     LIST_MESSAGE("&a[{0}] &e{1} player{2} online"),
 
-    MESSAGE_SENDER("&b&lme » {0} &7> &o"),
-    MESSAGE_RECEIVER("&b&l{0} » me &7> &o"),
+    MESSAGE_SENDER("&b&lme \u00bb {0} &7> &o"),
+    MESSAGE_RECEIVER("&b&l{0} \u00bb me &7> &o"),
 
     NO_PERMISSION("&cYou don't have permission to execute this command."),
     NOT_CONNECTED_TO_SERVER("&cYou must be connected to a server to use this subcommand."),
+
+    REPLY_NO_RECIPIENT("&cYou don't have anyone to reply to."),
 
     SEND_ALL("&aAll players have been sent to &b{0}"),
     SEND_CURRENT("&aAll players from your current server have been sent to &b{0}"),

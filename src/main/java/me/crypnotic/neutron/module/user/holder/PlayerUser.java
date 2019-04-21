@@ -6,6 +6,7 @@ import java.lang.ref.WeakReference;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 
 import lombok.RequiredArgsConstructor;
@@ -59,5 +60,13 @@ public class PlayerUser extends AbstractUser<Player> {
     @Override
     public Optional<UUID> getUUID() {
         return Optional.of(uuid);
+    }
+
+    public CommandSource getReplyRecipient() {
+        return data.getReplyRecipient();
+    }
+
+    public void setReplyRecipient(CommandSource source) {
+        data.setReplyRecipient(source);
     }
 }

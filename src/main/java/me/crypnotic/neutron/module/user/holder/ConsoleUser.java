@@ -3,10 +3,12 @@ package me.crypnotic.neutron.module.user.holder;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ConsoleCommandSource;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import me.crypnotic.neutron.api.Neutron;
 import me.crypnotic.neutron.api.user.AbstractUser;
 
@@ -16,6 +18,10 @@ public class ConsoleUser extends AbstractUser<ConsoleCommandSource> {
 
     @Getter
     private final String name;
+
+    @Getter
+    @Setter
+    private CommandSource replyRecipient;
 
     @Override
     public Optional<ConsoleCommandSource> getBase() {
