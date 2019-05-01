@@ -29,8 +29,8 @@ dependencies {
 		exclude group: 'com.google.guava', module: 'guava'
 	}
 	
-	compileOnly 'com.velocitypowered:velocity-api:1.0-SNAPSHOT'
-	annotationProcessor 'com.velocitypowered:velocity-api:1.0-SNAPSHOT'
+	compileOnly 'com.velocitypowered:velocity-api:1.0.0-SNAPSHOT'
+	annotationProcessor 'com.velocitypowered:velocity-api:1.0.0-SNAPSHOT'
 
 	compileOnly 'org.projectlombok:lombok:1.18.4'
 	annotationProcessor 'org.projectlombok:lombok:1.18.4'
