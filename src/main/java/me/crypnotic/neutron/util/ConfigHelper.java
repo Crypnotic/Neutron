@@ -27,6 +27,7 @@ package me.crypnotic.neutron.util;
 import com.google.common.reflect.TypeToken;
 
 import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
 public class ConfigHelper {
@@ -35,6 +36,18 @@ public class ConfigHelper {
     public static <T> T getSerializable(ConfigurationNode node, T config) {
         try {
             return node.getValue(TypeToken.of((Class<T>) config.getClass()), config);
+        } catch (ObjectMappingException exception) {
+            exception.printStackTrace();
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T, U extends ConfigurationNode> U setSerializable(U node, T config) {
+        try {
+            U newNode = (U) node.copy();
+            newNode.setValue(TypeToken.of((Class<T>) config.getClass()), config);
+            return newNode;
         } catch (ObjectMappingException exception) {
             exception.printStackTrace();
         }

@@ -42,6 +42,7 @@ import me.crypnotic.neutron.module.announcement.AnnouncementsModule;
 import me.crypnotic.neutron.module.command.CommandModule;
 import me.crypnotic.neutron.module.locale.LocaleModule;
 import me.crypnotic.neutron.module.serverlist.ServerListModule;
+import me.crypnotic.neutron.module.user.UserModule;
 import me.crypnotic.neutron.util.FileIO;
 import me.crypnotic.neutron.util.Strings;
 import net.kyori.text.TextComponent;
@@ -76,6 +77,7 @@ public class ModuleManager {
         modules.put(CommandModule.class, new CommandModule());
         modules.put(LocaleModule.class, new LocaleModule());
         modules.put(ServerListModule.class, new ServerListModule());
+        modules.put(UserModule.class, new UserModule());
 
         registerSerializers();
 
