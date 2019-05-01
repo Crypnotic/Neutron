@@ -145,8 +145,15 @@ public class ModuleManager {
                 continue;
             }
 
-            module.setEnabled(node.getNode("enabled").getBoolean());
-            if (module.isEnabled()) {
+            boolean newState = node.getNode("enabled").getBoolean();
+
+            if (module.isEnabled() && !newState) {
+                module.shutdown();
+                
+                module.setEnabled(newState);
+            } else if (newState) {
+                module.setEnabled(newState);
+                
                 if (module.reload()) {
                     enabled += 1;
 
