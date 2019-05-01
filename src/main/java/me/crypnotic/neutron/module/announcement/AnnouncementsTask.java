@@ -30,7 +30,7 @@ import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import me.crypnotic.neutron.NeutronPlugin;
-import me.crypnotic.neutron.util.Strings;
+import me.crypnotic.neutron.util.StringHelper;
 import net.kyori.text.TextComponent;
 
 @RequiredArgsConstructor
@@ -56,7 +56,7 @@ public class AnnouncementsTask implements Runnable {
             }
         }
 
-        TextComponent message = Strings.formatAndColor("{0}{1}", announcements.getPrefix(), localMessages.get(index));
+        TextComponent message = StringHelper.formatAndColor("{0}{1}", announcements.getPrefix(), localMessages.get(index));
 
         plugin.getProxy().broadcast(message);
 

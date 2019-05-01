@@ -33,7 +33,7 @@ import com.velocitypowered.api.proxy.server.ServerPing;
 import com.velocitypowered.api.proxy.server.ServerPing.Builder;
 
 import lombok.RequiredArgsConstructor;
-import me.crypnotic.neutron.util.Strings;
+import me.crypnotic.neutron.util.StringHelper;
 
 @RequiredArgsConstructor
 public class ServerListHandler {
@@ -77,10 +77,10 @@ public class ServerListHandler {
 
         switch (config.getServerPreview().getAction()) {
         case MESSAGE:
-            builder.samplePlayers(Strings.toSamplePlayerArray(config.getServerPreview().getMessages()));
+            builder.samplePlayers(StringHelper.toSamplePlayerArray(config.getServerPreview().getMessages()));
             break;
         case PLAYERS:
-            builder.samplePlayers(Strings.toSamplePlayerArray(
+            builder.samplePlayers(StringHelper.toSamplePlayerArray(
                     module.getNeutron().getProxy().getAllPlayers().stream().map(Player::getUsername).collect(Collectors.toList())));
             break;
         case EMPTY:

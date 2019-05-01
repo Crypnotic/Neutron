@@ -1,24 +1,21 @@
-package me.crypnotic.neutron.module.user;
+package me.crypnotic.neutron.module.user.holder;
 
-import com.velocitypowered.api.command.CommandSource;
+import java.util.Optional;
+import java.util.UUID;
+
 import com.velocitypowered.api.proxy.ConsoleCommandSource;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.crypnotic.neutron.api.Neutron;
 import me.crypnotic.neutron.api.user.AbstractUser;
-import ninja.leaping.configurate.ConfigurationNode;
-
-import java.util.Optional;
-import java.util.UUID;
 
 // TODO: Consider whether this should support *any* CommandSource that isn't a player (ie plugin-provided CommandSources)
 @RequiredArgsConstructor
 public class ConsoleUser extends AbstractUser<ConsoleCommandSource> {
 
-    private final ConfigurationNode root;
-
     @Getter
-    private String name;
+    private final String name;
 
     @Override
     public Optional<ConsoleCommandSource> getBase() {
@@ -27,11 +24,13 @@ public class ConsoleUser extends AbstractUser<ConsoleCommandSource> {
 
     @Override
     public void load() throws Exception {
-        name = root.getNode("name").getString("Console");
+        /* noop */
     }
 
     @Override
-    public void save() throws Exception { /* noop */ }
+    public void save() throws Exception {
+        /* noop */
+    }
 
     @Override
     public Optional<UUID> getUUID() {

@@ -22,36 +22,31 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package me.crypnotic.neutron.util;
+package me.crypnotic.neutron.module.user;
 
-import com.google.common.reflect.TypeToken;
+import lombok.Getter;
+import ninja.leaping.configurate.objectmapping.Setting;
+import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+public class UserConfig {
 
-public class ConfigHelper {
+    @Getter
+    @Setting(value = "cache", comment = "Advanced settings controlling how users are kept in memory")
+    private Cache cache;
 
-    @SuppressWarnings("unchecked")
-    public static <T> T getSerializable(ConfigurationNode node, T config) {
-        try {
-            return node.getValue(TypeToken.of((Class<T>) config.getClass()), config);
-        } catch (ObjectMappingException exception) {
-            exception.printStackTrace();
-        }
-        return null;
-    }
+    @Getter
+    @Setting(value = "console", comment = "Default settings for the console user")
+    private String console;
 
-    @SuppressWarnings("unchecked")
-    public static <T, U extends ConfigurationNode> U setSerializable(U node, T config) {
-        try {
-            U copy = (U) node.copy();
+    @ConfigSerializable
+    public static class Cache {
 
-            copy.setValue(TypeToken.of((Class<T>) config.getClass()), config);
+        @Getter
+        @Setting(value = "max-size", comment = "Maximum number of users to keep loaded")
+        private int maxSize = 100;
 
-            return copy;
-        } catch (ObjectMappingException exception) {
-            exception.printStackTrace();
-        }
-        return null;
+        @Getter
+        @Setting(value = "max-size", comment = "How long after its last access a user should stay loaded in minutes")
+        private int expiryMins = 30;
     }
 }

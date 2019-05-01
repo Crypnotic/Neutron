@@ -24,8 +24,6 @@
 */
 package me.crypnotic.neutron.manager;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,19 +35,17 @@ import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.crypnotic.neutron.NeutronPlugin;
+import me.crypnotic.neutron.api.configuration.Configuration;
 import me.crypnotic.neutron.api.module.AbstractModule;
 import me.crypnotic.neutron.module.announcement.AnnouncementsModule;
 import me.crypnotic.neutron.module.command.CommandModule;
 import me.crypnotic.neutron.module.locale.LocaleModule;
 import me.crypnotic.neutron.module.serverlist.ServerListModule;
 import me.crypnotic.neutron.module.user.UserModule;
-import me.crypnotic.neutron.util.FileIO;
-import me.crypnotic.neutron.util.Strings;
+import me.crypnotic.neutron.util.StringHelper;
 import net.kyori.text.TextComponent;
 import net.kyori.text.serializer.ComponentSerializers;
 import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.ConfigurationOptions;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
@@ -60,18 +56,12 @@ public class ModuleManager {
     private final NeutronPlugin neutron;
 
     @Getter
-    private File file;
-    @Getter
-    private HoconConfigurationLoader loader;
-    @Getter
-    private ConfigurationNode root;
+    private Configuration configuration;
 
     private Map<Class<? extends AbstractModule>, AbstractModule> modules = new HashMap<Class<? extends AbstractModule>, AbstractModule>();
 
     public boolean init() {
-        if (!loadConfig()) {
-            return false;
-        }
+        this.configuration = Configuration.builder().folder(neutron.getDataFolderPath()).name("config.conf").build();
 
         modules.put(AnnouncementsModule.class, new AnnouncementsModule());
         modules.put(CommandModule.class, new CommandModule());
@@ -83,7 +73,7 @@ public class ModuleManager {
 
         int enabled = 0;
         for (AbstractModule module : modules.values()) {
-            ConfigurationNode node = root.getNode(module.getName());
+            ConfigurationNode node = configuration.getNode(module.getName());
             if (node.isVirtual()) {
                 neutron.getLogger().warn("Failed to load module: " + module.getName());
                 continue;
@@ -118,7 +108,7 @@ public class ModuleManager {
             @Override
             public TextComponent deserialize(TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
                 if (!value.isVirtual()) {
-                    return Strings.color(value.getString());
+                    return StringHelper.color(value.getString());
                 }
                 return null;
             }
@@ -135,13 +125,13 @@ public class ModuleManager {
 
     @Subscribe
     public void onProxyReload(ProxyReloadEvent event) {
-        if (!loadConfig()) {
+        if (!configuration.reload()) {
             neutron.getLogger().warn("Failed to reload config on proxy reload");
         }
 
         int enabled = 0;
         for (AbstractModule module : modules.values()) {
-            ConfigurationNode node = root.getNode(module.getName());
+            ConfigurationNode node = configuration.getNode(module.getName());
             if (node.isVirtual()) {
                 neutron.getLogger().warn("Failed to reload module: " + module.getName());
                 continue;
@@ -151,11 +141,11 @@ public class ModuleManager {
 
             if (module.isEnabled() && !newState) {
                 module.shutdown();
-                
+
                 module.setEnabled(newState);
             } else if (newState) {
                 module.setEnabled(newState);
-                
+
                 if (module.reload()) {
                     enabled += 1;
 
@@ -180,32 +170,15 @@ public class ModuleManager {
         modules.values().stream().filter(AbstractModule::isEnabled).forEach(AbstractModule::shutdown);
     }
 
-    private boolean loadConfig() {
-        try {
-            this.file = FileIO.getOrCreate(neutron.getDataFolderPath(), "config.conf");
-            this.loader = HoconConfigurationLoader.builder().setDefaultOptions(ConfigurationOptions.defaults().setShouldCopyDefaults(true))
-                    .setFile(file).build();
-            this.root = loader.load();
-
-            return true;
-        } catch (IOException exception) {
-            exception.printStackTrace();
-
-            return false;
-        }
-    }
-
     public boolean save() {
-        try {
-            loader.save(root);
-            return true;
-        } catch (IOException exception) {
-            exception.printStackTrace();
-            return false;
-        }
+        return configuration.save();
     }
 
     public <T extends AbstractModule> T get(Class<T> clazz) {
         return clazz.cast(modules.get(clazz));
+    }
+
+    public ConfigurationNode getRoot() {
+        return configuration.getNode();
     }
 }

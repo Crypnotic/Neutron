@@ -37,11 +37,11 @@ import lombok.SneakyThrows;
 import me.crypnotic.neutron.NeutronPlugin;
 import me.crypnotic.neutron.api.Neutron;
 import me.crypnotic.neutron.api.user.AbstractUser;
-import me.crypnotic.neutron.module.locale.LocaleMessage;
-import me.crypnotic.neutron.module.locale.LocaleMessageTable;
 import me.crypnotic.neutron.module.locale.LocaleModule;
+import me.crypnotic.neutron.module.locale.message.LocaleMessage;
+import me.crypnotic.neutron.module.locale.message.LocaleMessageTable;
 import me.crypnotic.neutron.module.user.UserModule;
-import me.crypnotic.neutron.util.Strings;
+import me.crypnotic.neutron.util.StringHelper;
 import net.kyori.text.TextComponent;
 
 public abstract class CommandWrapper implements Command {
@@ -113,13 +113,13 @@ public abstract class CommandWrapper implements Command {
                 return table.get(message, values);
             }
         }
-        return Strings.formatAndColor(message.getDefaultMessage(), values);
+        return StringHelper.formatAndColor(message.getDefaultMessage(), values);
     }
 
-    public Optional<AbstractUser> getUser(CommandSource source) {
+    public Optional<AbstractUser<?>> getUser(CommandSource source) {
         UserModule module = getNeutron().getModuleManager().get(UserModule.class);
         if (module.isEnabled()) {
-            return Optional.ofNullable(module.getUser(source));
+            return module.getUser(source);
         }
         return Optional.empty();
     }

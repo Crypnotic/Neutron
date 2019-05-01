@@ -1,4 +1,4 @@
-package me.crypnotic.neutron.module.user;
+package me.crypnotic.neutron.module.user.holder;
 
 import lombok.Data;
 import ninja.leaping.configurate.objectmapping.Setting;

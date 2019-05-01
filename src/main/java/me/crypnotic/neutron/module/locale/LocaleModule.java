@@ -31,8 +31,10 @@ import java.util.Map;
 
 import lombok.Getter;
 import me.crypnotic.neutron.api.module.AbstractModule;
+import me.crypnotic.neutron.module.locale.message.LocaleMessage;
+import me.crypnotic.neutron.module.locale.message.LocaleMessageTable;
 import me.crypnotic.neutron.util.ConfigHelper;
-import me.crypnotic.neutron.util.FileIO;
+import me.crypnotic.neutron.util.FileHelper;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
@@ -51,7 +53,7 @@ public class LocaleModule extends AbstractModule {
             return false;
         }
 
-        this.folder = FileIO.getOrCreateDirectory(getNeutron().getDataFolderPath(), "locales");
+        this.folder = FileHelper.getOrCreateDirectory(getNeutron().getDataFolderPath(), "locales");
 
         loadDefaultLocale();
 
@@ -79,7 +81,7 @@ public class LocaleModule extends AbstractModule {
         this.defaultLocale = Locale.forLanguageTag(fallbackLocaleName);
 
         if (defaultLocale != null) {
-            File defaultLocaleFile = FileIO.getOrCreateLocale(folder.toPath(), fallbackLocaleName + ".conf");
+            File defaultLocaleFile = FileHelper.getOrCreateLocale(folder.toPath(), fallbackLocaleName + ".conf");
             if (defaultLocaleFile != null) {
                 loadMessageTable(defaultLocaleFile);
                 getNeutron().getLogger().info("Loaded fallback locale: " + fallbackLocaleName);
@@ -95,7 +97,7 @@ public class LocaleModule extends AbstractModule {
         }
 
         this.defaultLocale = Locale.forLanguageTag("en_US");
-        FileIO.getOrCreateLocale(folder.toPath(), "en_US.conf");
+        FileHelper.getOrCreateLocale(folder.toPath(), "en_US.conf");
     }
 
     private void loadMessageTable(File file) {

@@ -32,7 +32,7 @@ import java.nio.file.Path;
 
 import me.crypnotic.neutron.NeutronPlugin;
 
-public class FileIO {
+public class FileHelper {
 
     public static File getOrCreate(Path folder, String name) {
         File directory = getOrCreateDirectory(folder.getParent(), folder.getFileName().toString());

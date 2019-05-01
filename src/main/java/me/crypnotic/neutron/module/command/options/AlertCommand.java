@@ -29,7 +29,7 @@ import com.velocitypowered.api.command.CommandSource;
 import lombok.RequiredArgsConstructor;
 import me.crypnotic.neutron.module.command.CommandContext;
 import me.crypnotic.neutron.module.command.CommandWrapper;
-import me.crypnotic.neutron.module.locale.LocaleMessage;
+import me.crypnotic.neutron.module.locale.message.LocaleMessage;
 
 @RequiredArgsConstructor
 public class AlertCommand extends CommandWrapper {

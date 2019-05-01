@@ -22,32 +22,45 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package me.crypnotic.neutron.module.locale;
+package me.crypnotic.neutron.util;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.List;
+import java.util.UUID;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import me.crypnotic.neutron.util.Strings;
+import com.velocitypowered.api.proxy.server.ServerPing.SamplePlayer;
+
 import net.kyori.text.TextComponent;
+import net.kyori.text.serializer.ComponentSerializers;
 
-@RequiredArgsConstructor
-public class LocaleMessageTable {
+public class StringHelper {
 
-    @Getter
-    private final Locale locale;
-    private final Map<LocaleMessage, String> messages = new HashMap<LocaleMessage, String>();
+    @SuppressWarnings("deprecation")
+    public static TextComponent color(String text) {
+        if (text == null) {
+            return null;
+        }
 
-    public TextComponent get(LocaleMessage key, Object... values) {
-        String message = messages.get(key);
-
-        return Strings.formatAndColor(message != null ? message : key.getDefaultMessage(), values);
+        return ComponentSerializers.LEGACY.deserialize(text, '&');
     }
 
-    public boolean set(LocaleMessage key, String message) {
-        /* Return true if no entry existed previously */
-        return messages.put(key, message) == null;
+    public static String format(String text, Object... params) {
+        for (int i = 0; i < params.length; i++) {
+            Object param = params[i];
+            text = text.replace("{" + i + "}", param == null ? "null" : param.toString());
+        }
+        return text;
+    }
+
+    public static TextComponent formatAndColor(String text, Object... params) {
+        return color(format(text, params));
+    }
+
+    @SuppressWarnings("deprecation")
+    public static SamplePlayer[] toSamplePlayerArray(List<String> input) {
+        SamplePlayer[] result = new SamplePlayer[input.size()];
+        for (int i = 0; i < input.size(); i++) {
+            result[i] = new SamplePlayer(ComponentSerializers.LEGACY.serialize(color(input.get(i))), UUID.randomUUID());
+        }
+        return result;
     }
 }

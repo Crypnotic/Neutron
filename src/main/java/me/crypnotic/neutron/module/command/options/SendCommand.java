@@ -35,7 +35,7 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 
 import me.crypnotic.neutron.module.command.CommandContext;
 import me.crypnotic.neutron.module.command.CommandWrapper;
-import me.crypnotic.neutron.module.locale.LocaleMessage;
+import me.crypnotic.neutron.module.locale.message.LocaleMessage;
 
 public class SendCommand extends CommandWrapper {
 

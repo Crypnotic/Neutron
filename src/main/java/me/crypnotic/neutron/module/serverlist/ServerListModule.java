@@ -42,7 +42,6 @@ public class ServerListModule extends AbstractModule {
 
     @Getter
     private ServerListConfig config;
-
     private ScheduledTask pingTask;
     @Getter
     private int maxPlayerPing;

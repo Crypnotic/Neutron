@@ -24,38 +24,25 @@
 */
 package me.crypnotic.neutron.module.announcement;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.velocitypowered.api.scheduler.ScheduledTask;
 
+import me.crypnotic.neutron.api.configuration.Configuration;
 import me.crypnotic.neutron.api.module.AbstractModule;
-import me.crypnotic.neutron.util.FileIO;
 import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
 public class AnnouncementsModule extends AbstractModule {
 
-    private File file;
-    private HoconConfigurationLoader loader;
-    private ConfigurationNode root;
+    private Configuration configuration;
     private Map<String, Announcements> announcements = new HashMap<String, Announcements>();
 
     public boolean init() {
-        try {
-            this.file = FileIO.getOrCreate(getNeutron().getDataFolderPath(), "announcements.conf");
-            this.loader = HoconConfigurationLoader.builder().setFile(file).build();
-            this.root = loader.load();
-        } catch (IOException exception) {
-            exception.printStackTrace();
+        this.configuration = Configuration.builder().folder(getNeutron().getDataFolderPath()).name("announcements.conf").build();
 
-            return false;
-        }
-
-        for (ConfigurationNode node : root.getChildrenMap().values()) {
+        for (ConfigurationNode node : configuration.getNode().getChildrenMap().values()) {
             String id = node.getKey().toString();
             if (announcements.containsKey(id)) {
                 getNeutron().getLogger().warn("An announcement list has already been defined with the id: " + id);

@@ -22,45 +22,32 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package me.crypnotic.neutron.util;
+package me.crypnotic.neutron.module.locale.message;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
-import com.velocitypowered.api.proxy.server.ServerPing.SamplePlayer;
-
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import me.crypnotic.neutron.util.StringHelper;
 import net.kyori.text.TextComponent;
-import net.kyori.text.serializer.ComponentSerializers;
 
-public class Strings {
+@RequiredArgsConstructor
+public class LocaleMessageTable {
 
-    @SuppressWarnings("deprecation")
-    public static TextComponent color(String text) {
-        if (text == null) {
-            return null;
-        }
+    @Getter
+    private final Locale locale;
+    private final Map<LocaleMessage, String> messages = new HashMap<LocaleMessage, String>();
 
-        return ComponentSerializers.LEGACY.deserialize(text, '&');
+    public TextComponent get(LocaleMessage key, Object... values) {
+        String message = messages.get(key);
+
+        return StringHelper.formatAndColor(message != null ? message : key.getDefaultMessage(), values);
     }
 
-    public static String format(String text, Object... params) {
-        for (int i = 0; i < params.length; i++) {
-            Object param = params[i];
-            text = text.replace("{" + i + "}", param == null ? "null" : param.toString());
-        }
-        return text;
-    }
-
-    public static TextComponent formatAndColor(String text, Object... params) {
-        return color(format(text, params));
-    }
-
-    @SuppressWarnings("deprecation")
-    public static SamplePlayer[] toSamplePlayerArray(List<String> input) {
-        SamplePlayer[] result = new SamplePlayer[input.size()];
-        for (int i = 0; i < input.size(); i++) {
-            result[i] = new SamplePlayer(ComponentSerializers.LEGACY.serialize(color(input.get(i))), UUID.randomUUID());
-        }
-        return result;
+    public boolean set(LocaleMessage key, String message) {
+        /* Return true if no entry existed previously */
+        return messages.put(key, message) == null;
     }
 }
