@@ -1,8 +1,11 @@
 package me.crypnotic.neutron.module.user.holder;
 
+import com.velocitypowered.api.command.CommandSource;
 import lombok.Data;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+
+import java.lang.ref.WeakReference;
 
 @ConfigSerializable
 @Data
@@ -18,4 +21,13 @@ class PlayerData {
 
     // Non-persisted data - this is not saved when the user is unloaded.
 
+    private WeakReference<CommandSource> replyRecipient = null;
+
+    public CommandSource getReplyRecipient() {
+        return replyRecipient != null ? replyRecipient.get() : null;
+    }
+
+    public void setReplyRecipient(CommandSource replyRecipient) {
+        this.replyRecipient = new WeakReference<>(replyRecipient);
+    }
 }

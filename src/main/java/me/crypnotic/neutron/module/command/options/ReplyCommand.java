@@ -24,44 +24,44 @@
 */
 package me.crypnotic.neutron.module.command.options;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-
+import me.crypnotic.neutron.api.user.AbstractUser;
 import me.crypnotic.neutron.module.command.CommandContext;
 import me.crypnotic.neutron.module.command.CommandWrapper;
 import me.crypnotic.neutron.module.locale.message.LocaleMessage;
 import net.kyori.text.TextComponent;
 
-public class MessageCommand extends CommandWrapper {
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class ReplyCommand extends CommandWrapper {
 
     @Override
     public void handle(CommandSource source, CommandContext context) throws CommandExitException {
-        assertPermission(source, "neutron.command.message");
-        assertUsage(source, context.size() > 1);
+        assertPermission(source, "neutron.command.reply");
+        assertUsage(source, context.size() > 0);
 
-        Player target = getNeutron().getProxy().getPlayer(context.get(0)).orElse(null);
-        assertNotNull(source, target, LocaleMessage.UNKNOWN_PLAYER, context.get(0));
+        CommandSource target = getUser(source).map(AbstractUser::getReplyRecipient).orElse(null);
+        assertNotNull(source, target, LocaleMessage.REPLY_NO_RECIPIENT, context.get(0));
 
         String sourceName = source instanceof Player ? ((Player) source).getUsername() : "Console";
+        String targetName = target instanceof Player ? ((Player) target).getUsername() : "Console";
 
-        TextComponent content = TextComponent.of(context.join(" ", 1));
-        TextComponent sourceMessage = getMessage(source, LocaleMessage.MESSAGE_SENDER, target.getUsername()).append(content);
+        TextComponent content = TextComponent.of(context.join(" "));
+        TextComponent sourceMessage = getMessage(source, LocaleMessage.MESSAGE_SENDER, targetName).append(content);
         TextComponent targetMessage = getMessage(target, LocaleMessage.MESSAGE_RECEIVER, sourceName).append(content);
 
         source.sendMessage(sourceMessage);
         target.sendMessage(targetMessage);
 
-        getUser(source).ifPresent(user -> user.setReplyRecipient(target));
         getUser(target).ifPresent(user -> user.setReplyRecipient(source));
     }
 
     @Override
     public String getUsage() {
-        return "/message (player) (message)";
+        return "/reply (message)";
     }
 
     @Override

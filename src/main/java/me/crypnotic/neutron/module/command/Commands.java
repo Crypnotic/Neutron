@@ -28,12 +28,7 @@ import java.util.function.Supplier;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import me.crypnotic.neutron.module.command.options.AlertCommand;
-import me.crypnotic.neutron.module.command.options.FindCommand;
-import me.crypnotic.neutron.module.command.options.GlistCommand;
-import me.crypnotic.neutron.module.command.options.InfoCommand;
-import me.crypnotic.neutron.module.command.options.MessageCommand;
-import me.crypnotic.neutron.module.command.options.SendCommand;
+import me.crypnotic.neutron.module.command.options.*;
 
 @RequiredArgsConstructor
 public enum Commands {
@@ -42,6 +37,7 @@ public enum Commands {
     INFO("info", InfoCommand::new),
     GLIST("glist", GlistCommand::new),
     MESSAGE("message", MessageCommand::new),
+    REPLY("reply", ReplyCommand::new),
     SEND("send", SendCommand::new);
 
     @Getter

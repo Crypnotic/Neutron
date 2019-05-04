@@ -22,4 +22,8 @@ public abstract class AbstractUser<T extends CommandSource> {
 
     public abstract Optional<UUID> getUUID();
 
+    public abstract CommandSource getReplyRecipient();
+
+    public abstract void setReplyRecipient(CommandSource source);
+
 }
