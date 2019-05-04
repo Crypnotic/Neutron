@@ -28,6 +28,7 @@ import lombok.Getter;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
+@ConfigSerializable
 public class UserConfig {
 
     @Getter
