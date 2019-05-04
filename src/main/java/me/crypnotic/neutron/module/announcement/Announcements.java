@@ -25,12 +25,15 @@
 package me.crypnotic.neutron.module.announcement;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.velocitypowered.api.scheduler.ScheduledTask;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import me.crypnotic.neutron.util.StringHelper;
+import net.kyori.text.TextComponent;
 import ninja.leaping.configurate.ConfigurationNode;
 
 @RequiredArgsConstructor
@@ -43,7 +46,7 @@ public class Announcements {
     @Getter
     private final boolean maintainOrder;
     @Getter
-    private final List<String> messages;
+    private final List<TextComponent> messages;
     @Getter
     private final String prefix;
 
@@ -55,7 +58,9 @@ public class Announcements {
         long interval = node.getNode("interval").getLong();
         boolean maintainOrder = node.getNode("maintain-order").getBoolean();
         String prefix = node.getNode("prefix").getString("");
-        List<String> messages = node.getNode("messages").getList(Object::toString);
+        
+        List<TextComponent> messages = node.getNode("messages").getList(Object::toString).stream()
+                .map(message -> StringHelper.formatAndColor("{0}{1}", prefix, message)).collect(Collectors.toList());
 
         return new Announcements(id, interval, maintainOrder, messages, prefix);
     }

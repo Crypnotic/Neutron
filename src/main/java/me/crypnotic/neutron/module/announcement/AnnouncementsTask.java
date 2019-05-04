@@ -30,7 +30,6 @@ import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import me.crypnotic.neutron.NeutronPlugin;
-import me.crypnotic.neutron.util.StringHelper;
 import net.kyori.text.TextComponent;
 
 @RequiredArgsConstructor
@@ -39,7 +38,7 @@ public class AnnouncementsTask implements Runnable {
     private final NeutronPlugin plugin;
     private final Announcements announcements;
 
-    private List<String> localMessages;
+    private List<TextComponent> localMessages;
 
     private volatile int index = 0;
 
@@ -48,7 +47,7 @@ public class AnnouncementsTask implements Runnable {
         if (index == 0) {
             if (localMessages == null) {
                 /* Create a local copy to avoid reading or shuffling the master copy */
-                this.localMessages = new ArrayList<String>(announcements.getMessages());
+                this.localMessages = new ArrayList<TextComponent>(announcements.getMessages());
             }
 
             if (!announcements.isMaintainOrder()) {
@@ -56,9 +55,7 @@ public class AnnouncementsTask implements Runnable {
             }
         }
 
-        TextComponent message = StringHelper.formatAndColor("{0}{1}", announcements.getPrefix(), localMessages.get(index));
-
-        plugin.getProxy().broadcast(message);
+        plugin.getProxy().broadcast(localMessages.get(index));
 
         index += 1;
         if (index == localMessages.size()) {
