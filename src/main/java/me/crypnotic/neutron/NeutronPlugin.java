@@ -37,7 +37,9 @@ import com.velocitypowered.api.proxy.ProxyServer;
 
 import lombok.Getter;
 import me.crypnotic.neutron.api.Neutron;
+import me.crypnotic.neutron.api.configuration.Configuration;
 import me.crypnotic.neutron.manager.ModuleManager;
+import me.crypnotic.neutron.manager.user.UserManager;
 
 @Plugin(id = "@ID@", name = "@NAME@", version = "@VERSION@", description = "@DESCRIPTION@")
 public class NeutronPlugin {
@@ -54,19 +56,30 @@ public class NeutronPlugin {
     private Path dataFolderPath;
 
     @Getter
+    private Configuration configuration;
+
+    @Getter
     private ModuleManager moduleManager;
+    @Getter
+    private UserManager userManager;
 
     public NeutronPlugin() {
         Neutron.setNeutron(this);
-        
-        this.moduleManager = new ModuleManager(this);
     }
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
+        this.configuration = Configuration.builder().folder(dataFolderPath).name("config.conf").build();
+
+        this.userManager = new UserManager(configuration);
+        this.moduleManager = new ModuleManager(this, configuration);
+        
+        if (!userManager.init()) {
+            logger.warn("Failed to initialize UserManager. Many features will not work");
+        }
+
         if (!moduleManager.init()) {
-            logger.warn("Failed to initialize ModuleManager");
-            return;
+            logger.warn("Failed to initialize ModuleManager. Many features will not work");
         }
     }
 }

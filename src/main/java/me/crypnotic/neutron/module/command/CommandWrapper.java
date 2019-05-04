@@ -40,7 +40,6 @@ import me.crypnotic.neutron.api.user.AbstractUser;
 import me.crypnotic.neutron.module.locale.LocaleModule;
 import me.crypnotic.neutron.module.locale.message.LocaleMessage;
 import me.crypnotic.neutron.module.locale.message.LocaleMessageTable;
-import me.crypnotic.neutron.module.user.UserModule;
 import me.crypnotic.neutron.util.StringHelper;
 import net.kyori.text.TextComponent;
 
@@ -117,11 +116,7 @@ public abstract class CommandWrapper implements Command {
     }
 
     public Optional<AbstractUser<?>> getUser(CommandSource source) {
-        UserModule module = getNeutron().getModuleManager().get(UserModule.class);
-        if (module.isEnabled()) {
-            return module.getUser(source);
-        }
-        return Optional.empty();
+        return getNeutron().getUserManager().getUser(source);
     }
 
     public abstract void handle(CommandSource source, CommandContext context) throws CommandExitException;

@@ -1,4 +1,4 @@
-package me.crypnotic.neutron.module.user.holder;
+package me.crypnotic.neutron.manager.user.holder;
 
 import java.util.Optional;
 import java.util.UUID;

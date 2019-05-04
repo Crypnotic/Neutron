@@ -1,4 +1,4 @@
-package me.crypnotic.neutron.module.user;
+package me.crypnotic.neutron.manager.user;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -12,26 +12,29 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 
-import me.crypnotic.neutron.api.module.AbstractModule;
+import lombok.RequiredArgsConstructor;
+import me.crypnotic.neutron.api.configuration.Configuration;
 import me.crypnotic.neutron.api.user.AbstractUser;
-import me.crypnotic.neutron.module.user.holder.ConsoleUser;
-import me.crypnotic.neutron.module.user.holder.PlayerUser;
+import me.crypnotic.neutron.manager.user.holder.ConsoleUser;
+import me.crypnotic.neutron.manager.user.holder.PlayerUser;
 import me.crypnotic.neutron.util.ConfigHelper;
 
 // TODO: Should the module be responsible solely for storing data?
-public class UserModule extends AbstractModule {
+@RequiredArgsConstructor
+public class UserManager {
+
+    private final Configuration configuration;
 
     private UserConfig config;
     private LoadingCache<UUID, PlayerUser> players;
     private ConsoleUser console;
 
-    @Override
     public boolean init() {
-        this.config = ConfigHelper.getSerializable(getRootNode(), new UserConfig());
+        this.config = ConfigHelper.getSerializable(configuration.getNode("user"), new UserConfig());
         if (config == null) {
             return false;
         }
-        
+
         initCache();
 
         this.console = new ConsoleUser(config.getConsole());
@@ -60,29 +63,12 @@ public class UserModule extends AbstractModule {
             @Override
             public PlayerUser load(UUID uuid) throws Exception {
                 PlayerUser user = new PlayerUser(uuid);
-                
+
                 user.load();
-                
+
                 return user;
             }
         });
-    }
-
-    @Override
-    public boolean reload() {
-        return shutdown() && init();
-    }
-
-    @Override
-    public boolean shutdown() {
-        players.asMap().keySet().forEach(players::invalidate);
-
-        return true;
-    }
-
-    @Override
-    public String getName() {
-        return "user";
     }
 
     public Optional<AbstractUser<?>> getUser(UUID uuid) {

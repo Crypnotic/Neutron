@@ -32,7 +32,6 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyReloadEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.crypnotic.neutron.NeutronPlugin;
 import me.crypnotic.neutron.api.configuration.Configuration;
@@ -41,7 +40,6 @@ import me.crypnotic.neutron.module.announcement.AnnouncementsModule;
 import me.crypnotic.neutron.module.command.CommandModule;
 import me.crypnotic.neutron.module.locale.LocaleModule;
 import me.crypnotic.neutron.module.serverlist.ServerListModule;
-import me.crypnotic.neutron.module.user.UserModule;
 import me.crypnotic.neutron.util.StringHelper;
 import net.kyori.text.TextComponent;
 import net.kyori.text.serializer.ComponentSerializers;
@@ -54,20 +52,15 @@ import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 public class ModuleManager {
 
     private final NeutronPlugin neutron;
-
-    @Getter
-    private Configuration configuration;
+    private final Configuration configuration;
 
     private Map<Class<? extends AbstractModule>, AbstractModule> modules = new HashMap<Class<? extends AbstractModule>, AbstractModule>();
 
     public boolean init() {
-        this.configuration = Configuration.builder().folder(neutron.getDataFolderPath()).name("config.conf").build();
-
         modules.put(AnnouncementsModule.class, new AnnouncementsModule());
         modules.put(CommandModule.class, new CommandModule());
         modules.put(LocaleModule.class, new LocaleModule());
         modules.put(ServerListModule.class, new ServerListModule());
-        modules.put(UserModule.class, new UserModule());
 
         registerSerializers();
 
