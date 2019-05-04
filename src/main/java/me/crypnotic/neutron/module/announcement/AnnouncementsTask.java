@@ -28,10 +28,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.gson.JsonParseException;
 import lombok.RequiredArgsConstructor;
 import me.crypnotic.neutron.NeutronPlugin;
 import me.crypnotic.neutron.util.StringHelper;
+import net.kyori.text.Component;
 import net.kyori.text.TextComponent;
+import net.kyori.text.serializer.ComponentSerializers;
 
 @RequiredArgsConstructor
 public class AnnouncementsTask implements Runnable {
@@ -56,7 +59,14 @@ public class AnnouncementsTask implements Runnable {
             }
         }
 
-        TextComponent message = StringHelper.formatAndColor("{0}{1}", announcements.getPrefix(), localMessages.get(index));
+        TextComponent message;
+
+        try {
+            Component announcement = ComponentSerializers.JSON.deserialize(localMessages.get(index));
+            message = StringHelper.formatAndColor(announcements.getPrefix()).append(announcement);
+        } catch (JsonParseException e) {
+            message = StringHelper.formatAndColor("{0}{1}", announcements.getPrefix(), localMessages.get(index));
+        }
 
         plugin.getProxy().broadcast(message);
 
