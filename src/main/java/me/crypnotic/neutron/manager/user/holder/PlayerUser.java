@@ -35,7 +35,7 @@ public class PlayerUser extends AbstractUser<Player> {
 
     @Override
     public void load() throws Exception {
-        this.configuration = Configuration.builder().folder(getNeutron().getDataFolderPath()).name(uuid.toString() + ".conf").build();
+        this.configuration = Configuration.builder().folder(getNeutron().getDataFolderPath().resolve("users")).name(uuid.toString() + ".conf").build();
 
         this.data = ConfigHelper.getSerializable(configuration.getNode(), new PlayerData());
     }
