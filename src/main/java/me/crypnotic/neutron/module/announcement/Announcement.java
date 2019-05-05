@@ -24,44 +24,58 @@
 */
 package me.crypnotic.neutron.module.announcement;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.TimeUnit;
 
 import com.velocitypowered.api.scheduler.ScheduledTask;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import me.crypnotic.neutron.util.StringHelper;
+import me.crypnotic.neutron.NeutronPlugin;
 import net.kyori.text.TextComponent;
-import ninja.leaping.configurate.ConfigurationNode;
 
 @RequiredArgsConstructor
-public class Announcements {
+public class Announcement {
 
+    private final NeutronPlugin plugin;
     @Getter
     private final String id;
     @Getter
-    private final long interval;
-    @Getter
-    private final boolean maintainOrder;
-    @Getter
-    private final List<TextComponent> messages;
-    @Getter
-    private final String prefix;
+    private final AnnouncementData data;
 
     @Getter
-    @Setter
     private ScheduledTask task;
+    private List<TextComponent> localMessages;
+    private volatile int index = 0;
 
-    public static Announcements load(String id, ConfigurationNode node) {
-        long interval = node.getNode("interval").getLong();
-        boolean maintainOrder = node.getNode("maintain-order").getBoolean();
-        String prefix = node.getNode("prefix").getString("");
-        
-        List<TextComponent> messages = node.getNode("messages").getList(Object::toString).stream()
-                .map(message -> StringHelper.formatAndColor("{0}{1}", prefix, message)).collect(Collectors.toList());
+    private void broadcast() {
+        if (index == 0) {
+            if (localMessages == null) {
+                /* Create a local copy to avoid reading or shuffling the master copy */
+                this.localMessages = new ArrayList<TextComponent>(data.getMessages());
+            }
 
-        return new Announcements(id, interval, maintainOrder, messages, prefix);
+            if (!data.isMaintainOrder()) {
+                Collections.shuffle(localMessages);
+            }
+        }
+
+        plugin.getProxy().broadcast(data.getPrefix().append(localMessages.get(index)));
+
+        index += 1;
+        if (index == localMessages.size()) {
+            index = 0;
+        }
+    }
+
+    public static Announcement schedule(NeutronPlugin neutron, String id, AnnouncementData data) {
+        Announcement announcement = new Announcement(neutron, id, data);
+
+        announcement.task = neutron.getProxy().getScheduler().buildTask(neutron, announcement::broadcast)
+                .repeat(announcement.data.getInterval(), TimeUnit.SECONDS).schedule();
+
+        return announcement;
     }
 }

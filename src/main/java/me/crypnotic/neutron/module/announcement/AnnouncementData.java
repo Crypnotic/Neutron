@@ -24,42 +24,28 @@
 */
 package me.crypnotic.neutron.module.announcement;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import me.crypnotic.neutron.NeutronPlugin;
 import net.kyori.text.TextComponent;
+import ninja.leaping.configurate.objectmapping.Setting;
+import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
+@ConfigSerializable
 @RequiredArgsConstructor
-public class AnnouncementsTask implements Runnable {
+public class AnnouncementData {
 
-    private final NeutronPlugin plugin;
-    private final Announcements announcements;
-
-    private List<TextComponent> localMessages;
-
-    private volatile int index = 0;
-
-    @Override
-    public void run() {
-        if (index == 0) {
-            if (localMessages == null) {
-                /* Create a local copy to avoid reading or shuffling the master copy */
-                this.localMessages = new ArrayList<TextComponent>(announcements.getMessages());
-            }
-
-            if (!announcements.isMaintainOrder()) {
-                Collections.shuffle(localMessages);
-            }
-        }
-
-        plugin.getProxy().broadcast(localMessages.get(index));
-
-        index += 1;
-        if (index == localMessages.size()) {
-            index = 0;
-        }
-    }
+    @Getter
+    @Setting("interval")
+    private long interval;
+    @Getter
+    @Setting("maintain-order")
+    private boolean maintainOrder;
+    @Getter
+    @Setting("messages")
+    private List<TextComponent> messages;
+    @Getter
+    @Setting("prefix")
+    private TextComponent prefix;
 }

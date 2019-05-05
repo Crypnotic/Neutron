@@ -36,16 +36,13 @@ import lombok.RequiredArgsConstructor;
 import me.crypnotic.neutron.NeutronPlugin;
 import me.crypnotic.neutron.api.configuration.Configuration;
 import me.crypnotic.neutron.api.module.AbstractModule;
+import me.crypnotic.neutron.api.serializer.TextComponentSerializer;
 import me.crypnotic.neutron.module.announcement.AnnouncementsModule;
 import me.crypnotic.neutron.module.command.CommandModule;
 import me.crypnotic.neutron.module.locale.LocaleModule;
 import me.crypnotic.neutron.module.serverlist.ServerListModule;
-import me.crypnotic.neutron.util.StringHelper;
 import net.kyori.text.TextComponent;
-import net.kyori.text.serializer.ComponentSerializers;
 import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 
 @RequiredArgsConstructor
@@ -96,24 +93,7 @@ public class ModuleManager {
     }
 
     private void registerSerializers() {
-        TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(TextComponent.class), new TypeSerializer<TextComponent>() {
-
-            @Override
-            public TextComponent deserialize(TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
-                if (!value.isVirtual()) {
-                    return StringHelper.color(value.getString());
-                }
-                return null;
-            }
-
-            @Override
-            @SuppressWarnings("deprecation")
-            public void serialize(TypeToken<?> type, TextComponent obj, ConfigurationNode value) throws ObjectMappingException {
-                if (obj != null) {
-                    value.setValue(ComponentSerializers.LEGACY.serialize(obj, '&'));
-                }
-            }
-        });
+        TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(TextComponent.class), new TextComponentSerializer());
     }
 
     @Subscribe
