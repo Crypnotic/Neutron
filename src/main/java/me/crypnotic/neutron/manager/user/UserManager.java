@@ -71,7 +71,7 @@ public class UserManager {
         });
     }
 
-    public Optional<User<?>> getUser(UUID uuid) {
+    public Optional<User<? extends CommandSource>> getUser(UUID uuid) {
         try {
             return Optional.ofNullable(players.get(uuid));
         } catch (ExecutionException exception) {
@@ -80,7 +80,7 @@ public class UserManager {
         return Optional.empty();
     }
 
-    public Optional<User<?>> getUser(CommandSource base) {
+    public Optional<User<? extends CommandSource>> getUser(CommandSource base) {
         if (base instanceof Player) {
             return getUser(((Player) base).getUniqueId());
         } else if (base instanceof ConsoleCommandSource) {

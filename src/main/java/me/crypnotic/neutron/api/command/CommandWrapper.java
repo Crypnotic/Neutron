@@ -115,7 +115,7 @@ public abstract class CommandWrapper implements Command {
         return StringHelper.formatAndColor(message.getDefaultMessage(), values);
     }
 
-    public Optional<User<?>> getUser(CommandSource source) {
+    public Optional<User<? extends CommandSource>> getUser(CommandSource source) {
         return getNeutron().getUserManager().getUser(source);
     }
 
