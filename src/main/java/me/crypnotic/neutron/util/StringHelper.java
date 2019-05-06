@@ -25,22 +25,34 @@
 package me.crypnotic.neutron.util;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.velocitypowered.api.proxy.server.ServerPing.SamplePlayer;
 
+import net.kyori.text.Component;
 import net.kyori.text.TextComponent;
+import net.kyori.text.format.TextColor;
+import net.kyori.text.format.TextDecoration;
 import net.kyori.text.serializer.ComponentSerializers;
 
 public class StringHelper {
 
     @SuppressWarnings("deprecation")
-    public static TextComponent color(String text) {
+    public static Component color(String text) {
         if (text == null) {
             return null;
         }
 
         return ComponentSerializers.LEGACY.deserialize(text, '&');
+    }
+    
+    public static Component serialize(String json) {
+        if (json == null) {
+            return null;
+        }
+
+        return ComponentSerializers.JSON.deserialize(json);
     }
 
     public static String format(String text, Object... params) {
@@ -51,8 +63,19 @@ public class StringHelper {
         return text;
     }
 
-    public static TextComponent formatAndColor(String text, Object... params) {
+    public static Component formatAndColor(String text, Object... params) {
         return color(format(text, params));
+    }
+    
+    public static Component append(Component root, Component child) {
+        List<Component> rootChildren = root.children();
+        Component lastRootChild = rootChildren.get(rootChildren.size() - 1);
+        Set<TextDecoration> decorations = lastRootChild.decorations();
+        TextColor color = lastRootChild.color();
+        
+        Component result = root.append(TextComponent.builder().content("").color(color).decorations(decorations, true).append(child).build());
+        
+        return result;
     }
 
     @SuppressWarnings("deprecation")

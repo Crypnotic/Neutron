@@ -31,7 +31,7 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.crypnotic.neutron.util.StringHelper;
-import net.kyori.text.TextComponent;
+import net.kyori.text.Component;
 
 @RequiredArgsConstructor
 public class LocaleMessageTable {
@@ -40,7 +40,7 @@ public class LocaleMessageTable {
     private final Locale locale;
     private final Map<LocaleMessage, String> messages = new HashMap<LocaleMessage, String>();
 
-    public TextComponent get(LocaleMessage key, Object... values) {
+    public Component get(LocaleMessage key, Object... values) {
         String message = messages.get(key);
 
         return StringHelper.formatAndColor(message != null ? message : key.getDefaultMessage(), values);

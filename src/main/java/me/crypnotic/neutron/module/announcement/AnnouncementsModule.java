@@ -26,18 +26,18 @@ package me.crypnotic.neutron.module.announcement;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import com.velocitypowered.api.scheduler.ScheduledTask;
 
 import me.crypnotic.neutron.api.configuration.Configuration;
 import me.crypnotic.neutron.api.module.AbstractModule;
+import me.crypnotic.neutron.util.ConfigHelper;
 import ninja.leaping.configurate.ConfigurationNode;
 
 public class AnnouncementsModule extends AbstractModule {
 
     private Configuration configuration;
-    private Map<String, Announcements> announcements = new HashMap<String, Announcements>();
+    private Map<String, Announcement> announcements = new HashMap<String, Announcement>();
 
     public boolean init() {
         this.configuration = Configuration.builder().folder(getNeutron().getDataFolderPath()).name("announcements.conf").build();
@@ -49,17 +49,14 @@ public class AnnouncementsModule extends AbstractModule {
                 continue;
             }
 
-            Announcements announcement = Announcements.load(id, node);
-            if (announcement != null) {
+            AnnouncementData data = ConfigHelper.getSerializable(node, new AnnouncementData());
+            if (data != null) {
+                Announcement announcement = Announcement.create(getNeutron(), id, data);
+                
                 announcements.put(id, announcement);
             } else {
                 getNeutron().getLogger().warn("Failed to load announcement list: " + id);
             }
-
-            ScheduledTask task = getNeutron().getProxy().getScheduler().buildTask(getNeutron(), new AnnouncementsTask(getNeutron(), announcement))
-                    .repeat(announcement.getInterval(), TimeUnit.SECONDS).schedule();
-
-            announcement.setTask(task);
         }
 
         getNeutron().getLogger().info("Announcements loaded: " + announcements.size());
@@ -74,7 +71,7 @@ public class AnnouncementsModule extends AbstractModule {
 
     @Override
     public boolean shutdown() {
-        announcements.values().stream().map(Announcements::getTask).forEach(ScheduledTask::cancel);
+        announcements.values().stream().map(Announcement::getTask).forEach(ScheduledTask::cancel);
 
         announcements.clear();
 

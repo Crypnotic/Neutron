@@ -41,7 +41,7 @@ import me.crypnotic.neutron.module.locale.LocaleModule;
 import me.crypnotic.neutron.module.locale.message.LocaleMessage;
 import me.crypnotic.neutron.module.locale.message.LocaleMessageTable;
 import me.crypnotic.neutron.util.StringHelper;
-import net.kyori.text.TextComponent;
+import net.kyori.text.Component;
 
 public abstract class CommandWrapper implements Command {
 
@@ -99,7 +99,7 @@ public abstract class CommandWrapper implements Command {
         source.sendMessage(getMessage(source, message, values));
     }
 
-    public TextComponent getMessage(CommandSource source, LocaleMessage message, Object... values) {
+    public Component getMessage(CommandSource source, LocaleMessage message, Object... values) {
         LocaleModule module = getNeutron().getModuleManager().get(LocaleModule.class);
         if (module.isEnabled()) {
             Locale locale = module.getDefaultLocale();
