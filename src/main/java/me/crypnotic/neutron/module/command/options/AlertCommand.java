@@ -31,6 +31,7 @@ import me.crypnotic.neutron.api.command.CommandContext;
 import me.crypnotic.neutron.api.command.CommandWrapper;
 import me.crypnotic.neutron.api.event.AlertBroadcastEvent;
 import me.crypnotic.neutron.module.locale.message.LocaleMessage;
+import net.kyori.text.Component;
 
 @RequiredArgsConstructor
 public class AlertCommand extends CommandWrapper {
@@ -44,12 +45,13 @@ public class AlertCommand extends CommandWrapper {
 
         getNeutron().getProxy().getAllPlayers().forEach(target -> message(target, LocaleMessage.ALERT_MESSAGE, message));
 
+        Component consoleMessage = getMessage(getNeutron().getProxy().getConsoleCommandSource(), LocaleMessage.ALERT_MESSAGE, message);
+
         /* Fire event for API purposes */
-        getNeutron().getProxy().getEventManager().fireAndForget(new AlertBroadcastEvent(getUser(source), message,
-                getMessage(getNeutron().getProxy().getConsoleCommandSource(), LocaleMessage.ALERT_MESSAGE, message)));
+        getNeutron().getProxy().getEventManager().fireAndForget(new AlertBroadcastEvent(getUser(source), message, consoleMessage));
 
         /* Log to console since ProxyServer#broadcast doesn't do so */
-        message(getNeutron().getProxy().getConsoleCommandSource(), LocaleMessage.ALERT_MESSAGE, message);
+        getNeutron().getProxy().getConsoleCommandSource().sendMessage(consoleMessage);
     }
 
     @Override
