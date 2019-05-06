@@ -31,9 +31,9 @@ import java.util.stream.Collectors;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 
-import me.crypnotic.neutron.api.user.AbstractUser;
-import me.crypnotic.neutron.module.command.CommandContext;
-import me.crypnotic.neutron.module.command.CommandWrapper;
+import me.crypnotic.neutron.api.command.CommandContext;
+import me.crypnotic.neutron.api.command.CommandWrapper;
+import me.crypnotic.neutron.api.user.User;
 import me.crypnotic.neutron.module.locale.message.LocaleMessage;
 import net.kyori.text.Component;
 import net.kyori.text.TextComponent;
@@ -45,7 +45,7 @@ public class ReplyCommand extends CommandWrapper {
         assertPermission(source, "neutron.command.reply");
         assertUsage(source, context.size() > 0);
 
-        CommandSource target = getUser(source).map(AbstractUser::getReplyRecipient).orElse(null);
+        CommandSource target = getUser(source).map(User::getReplyRecipient).orElse(null);
         assertNotNull(source, target, LocaleMessage.REPLY_NO_RECIPIENT, context.get(0));
 
         String sourceName = source instanceof Player ? ((Player) source).getUsername() : "Console";

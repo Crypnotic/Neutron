@@ -11,12 +11,12 @@ import com.velocitypowered.api.proxy.Player;
 
 import lombok.RequiredArgsConstructor;
 import me.crypnotic.neutron.api.configuration.Configuration;
-import me.crypnotic.neutron.api.user.AbstractUser;
+import me.crypnotic.neutron.api.user.User;
 import me.crypnotic.neutron.util.ConfigHelper;
 import ninja.leaping.configurate.ConfigurationNode;
 
 @RequiredArgsConstructor
-public class PlayerUser extends AbstractUser<Player> {
+public class PlayerUser implements User<Player> {
 
     private final UUID uuid;
     private WeakReference<Player> base;
@@ -35,7 +35,8 @@ public class PlayerUser extends AbstractUser<Player> {
 
     @Override
     public void load() throws Exception {
-        this.configuration = Configuration.builder().folder(getNeutron().getDataFolderPath().resolve("users")).name(uuid.toString() + ".conf").build();
+        this.configuration = Configuration.builder().folder(getNeutron().getDataFolderPath().resolve("users")).name(uuid.toString() + ".conf")
+                .build();
 
         this.data = ConfigHelper.getSerializable(configuration.getNode(), new PlayerData());
     }

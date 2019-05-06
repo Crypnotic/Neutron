@@ -22,33 +22,24 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package me.crypnotic.neutron.api.module;
+package me.crypnotic.neutron.api.event;
+
+import java.util.Optional;
+
+import com.velocitypowered.api.command.CommandSource;
 
 import lombok.Getter;
-import lombok.Setter;
-import me.crypnotic.neutron.NeutronPlugin;
-import me.crypnotic.neutron.api.Neutron;
-import ninja.leaping.configurate.ConfigurationNode;
+import lombok.RequiredArgsConstructor;
+import me.crypnotic.neutron.api.user.User;
+import net.kyori.text.Component;
 
-public abstract class AbstractModule {
+@RequiredArgsConstructor
+public final class AlertBroadcastEvent {
 
     @Getter
-    @Setter
-    private boolean enabled;
-
-    public abstract boolean init();
-
-    public abstract boolean reload();
-
-    public abstract boolean shutdown();
-
-    public abstract String getName();
-
-    public NeutronPlugin getNeutron() {
-        return Neutron.getNeutron();
-    }
-
-    public ConfigurationNode getRootNode() {
-        return getNeutron().getModuleManager().getRoot().getNode(getName());
-    }
+    private final Optional<User<? extends CommandSource>> author;
+    @Getter
+    private final String unformattedText;
+    @Getter
+    private final Component message;
 }

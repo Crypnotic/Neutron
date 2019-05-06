@@ -22,50 +22,33 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package me.crypnotic.neutron.module.command;
+package me.crypnotic.neutron.api.module;
 
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import me.crypnotic.neutron.NeutronPlugin;
+import me.crypnotic.neutron.api.Neutron;
+import ninja.leaping.configurate.ConfigurationNode;
 
-@RequiredArgsConstructor
-public class CommandContext {
+public abstract class Module {
 
-    private final String[] arguments;
+    @Getter
+    @Setter
+    private boolean enabled;
 
-    public String get(int index) {
-        if (index >= size()) {
-            throw new IllegalArgumentException("Index: " + index + " > Length: " + size());
-        }
-        return arguments[index];
+    public abstract boolean init();
+
+    public abstract boolean reload();
+
+    public abstract boolean shutdown();
+
+    public abstract String getName();
+
+    public NeutronPlugin getNeutron() {
+        return Neutron.getNeutron();
     }
 
-    public Integer getInteger(int index) {
-        try {
-            return Integer.valueOf(get(index));
-        } catch (NumberFormatException exception) {
-            return -1;
-        }
-    }
-
-    public String join(String delimeter) {
-        return String.join(" ", arguments);
-    }
-
-    public String join(String delimeter, int start) {
-        return join(delimeter, start, size());
-    }
-
-    public String join(String delimeter, int start, int end) {
-        StringBuilder builder = new StringBuilder();
-        for (int i = start; i < end; i++) {
-            builder.append(get(i));
-            if (i < end) {
-                builder.append(delimeter);
-            }
-        }
-        return builder.toString();
-    }
-
-    public int size() {
-        return arguments.length;
+    public ConfigurationNode getRootNode() {
+        return getNeutron().getModuleManager().getRoot().getNode(getName());
     }
 }

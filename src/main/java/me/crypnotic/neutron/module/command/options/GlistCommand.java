@@ -32,8 +32,8 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 
-import me.crypnotic.neutron.module.command.CommandContext;
-import me.crypnotic.neutron.module.command.CommandWrapper;
+import me.crypnotic.neutron.api.command.CommandContext;
+import me.crypnotic.neutron.api.command.CommandWrapper;
 import me.crypnotic.neutron.module.locale.message.LocaleMessage;
 import net.kyori.text.Component;
 import net.kyori.text.TextComponent;

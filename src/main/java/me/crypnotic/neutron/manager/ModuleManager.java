@@ -35,7 +35,7 @@ import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import lombok.RequiredArgsConstructor;
 import me.crypnotic.neutron.NeutronPlugin;
 import me.crypnotic.neutron.api.configuration.Configuration;
-import me.crypnotic.neutron.api.module.AbstractModule;
+import me.crypnotic.neutron.api.module.Module;
 import me.crypnotic.neutron.api.serializer.ComponentSerializer;
 import me.crypnotic.neutron.module.announcement.AnnouncementsModule;
 import me.crypnotic.neutron.module.command.CommandModule;
@@ -51,7 +51,7 @@ public class ModuleManager {
     private final NeutronPlugin neutron;
     private final Configuration configuration;
 
-    private Map<Class<? extends AbstractModule>, AbstractModule> modules = new HashMap<Class<? extends AbstractModule>, AbstractModule>();
+    private Map<Class<? extends Module>, Module> modules = new HashMap<Class<? extends Module>, Module>();
 
     public boolean init() {
         modules.put(AnnouncementsModule.class, new AnnouncementsModule());
@@ -62,7 +62,7 @@ public class ModuleManager {
         registerSerializers();
 
         int enabled = 0;
-        for (AbstractModule module : modules.values()) {
+        for (Module module : modules.values()) {
             ConfigurationNode node = configuration.getNode(module.getName());
             if (node.isVirtual()) {
                 neutron.getLogger().warn("Failed to load module: " + module.getName());
@@ -103,7 +103,7 @@ public class ModuleManager {
         }
 
         int enabled = 0;
-        for (AbstractModule module : modules.values()) {
+        for (Module module : modules.values()) {
             ConfigurationNode node = configuration.getNode(module.getName());
             if (node.isVirtual()) {
                 neutron.getLogger().warn("Failed to reload module: " + module.getName());
@@ -140,14 +140,14 @@ public class ModuleManager {
     public void onProxyShutdown(ProxyShutdownEvent event) {
         neutron.getLogger().info("Shutting down active modules...");
 
-        modules.values().stream().filter(AbstractModule::isEnabled).forEach(AbstractModule::shutdown);
+        modules.values().stream().filter(Module::isEnabled).forEach(Module::shutdown);
     }
 
     public boolean save() {
         return configuration.save();
     }
 
-    public <T extends AbstractModule> T get(Class<T> clazz) {
+    public <T extends Module> T get(Class<T> clazz) {
         return clazz.cast(modules.get(clazz));
     }
 

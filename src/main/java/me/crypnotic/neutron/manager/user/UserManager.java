@@ -14,7 +14,7 @@ import com.velocitypowered.api.proxy.Player;
 
 import lombok.RequiredArgsConstructor;
 import me.crypnotic.neutron.api.configuration.Configuration;
-import me.crypnotic.neutron.api.user.AbstractUser;
+import me.crypnotic.neutron.api.user.User;
 import me.crypnotic.neutron.manager.user.holder.ConsoleUser;
 import me.crypnotic.neutron.manager.user.holder.PlayerUser;
 import me.crypnotic.neutron.util.ConfigHelper;
@@ -71,7 +71,7 @@ public class UserManager {
         });
     }
 
-    public Optional<AbstractUser<?>> getUser(UUID uuid) {
+    public Optional<User<?>> getUser(UUID uuid) {
         try {
             return Optional.ofNullable(players.get(uuid));
         } catch (ExecutionException exception) {
@@ -80,7 +80,7 @@ public class UserManager {
         return Optional.empty();
     }
 
-    public Optional<AbstractUser<?>> getUser(CommandSource base) {
+    public Optional<User<?>> getUser(CommandSource base) {
         if (base instanceof Player) {
             return getUser(((Player) base).getUniqueId());
         } else if (base instanceof ConsoleCommandSource) {

@@ -22,7 +22,7 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package me.crypnotic.neutron.module.command;
+package me.crypnotic.neutron.api.command;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -36,7 +36,7 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import me.crypnotic.neutron.NeutronPlugin;
 import me.crypnotic.neutron.api.Neutron;
-import me.crypnotic.neutron.api.user.AbstractUser;
+import me.crypnotic.neutron.api.user.User;
 import me.crypnotic.neutron.module.locale.LocaleModule;
 import me.crypnotic.neutron.module.locale.message.LocaleMessage;
 import me.crypnotic.neutron.module.locale.message.LocaleMessageTable;
@@ -115,7 +115,7 @@ public abstract class CommandWrapper implements Command {
         return StringHelper.formatAndColor(message.getDefaultMessage(), values);
     }
 
-    public Optional<AbstractUser<?>> getUser(CommandSource source) {
+    public Optional<User<?>> getUser(CommandSource source) {
         return getNeutron().getUserManager().getUser(source);
     }
 

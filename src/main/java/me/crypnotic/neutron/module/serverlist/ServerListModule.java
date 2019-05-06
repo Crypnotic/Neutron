@@ -34,11 +34,11 @@ import com.velocitypowered.api.proxy.server.ServerPing.Players;
 import com.velocitypowered.api.scheduler.ScheduledTask;
 
 import lombok.Getter;
-import me.crypnotic.neutron.api.module.AbstractModule;
+import me.crypnotic.neutron.api.module.Module;
 import me.crypnotic.neutron.module.serverlist.ServerListConfig.PlayerCount;
 import me.crypnotic.neutron.util.ConfigHelper;
 
-public class ServerListModule extends AbstractModule {
+public class ServerListModule extends Module {
 
     @Getter
     private ServerListConfig config;
