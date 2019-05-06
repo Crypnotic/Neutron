@@ -27,25 +27,30 @@ package me.crypnotic.neutron.api.serializer;
 import com.google.common.reflect.TypeToken;
 
 import me.crypnotic.neutron.util.StringHelper;
-import net.kyori.text.TextComponent;
+import net.kyori.text.Component;
 import net.kyori.text.serializer.ComponentSerializers;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 
-public class TextComponentSerializer implements TypeSerializer<TextComponent> {
+public class ComponentSerializer implements TypeSerializer<Component> {
 
     @Override
-    public TextComponent deserialize(TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
+    public Component deserialize(TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
         if (!value.isVirtual()) {
-            return StringHelper.color(value.getString());
+            String text = value.getString();
+            if (text.startsWith("{")) {
+                return StringHelper.serialize(text);
+            } else {                
+                return StringHelper.color(text);
+            }
         }
         return null;
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public void serialize(TypeToken<?> type, TextComponent obj, ConfigurationNode value) throws ObjectMappingException {
+    public void serialize(TypeToken<?> type, Component obj, ConfigurationNode value) throws ObjectMappingException {
         if (obj != null) {
             value.setValue(ComponentSerializers.LEGACY.serialize(obj, '&'));
         }

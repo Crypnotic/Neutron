@@ -34,6 +34,7 @@ import com.velocitypowered.api.proxy.Player;
 import me.crypnotic.neutron.module.command.CommandContext;
 import me.crypnotic.neutron.module.command.CommandWrapper;
 import me.crypnotic.neutron.module.locale.message.LocaleMessage;
+import net.kyori.text.Component;
 import net.kyori.text.TextComponent;
 
 public class MessageCommand extends CommandWrapper {
@@ -48,9 +49,9 @@ public class MessageCommand extends CommandWrapper {
 
         String sourceName = source instanceof Player ? ((Player) source).getUsername() : "Console";
 
-        TextComponent content = TextComponent.of(context.join(" ", 1));
-        TextComponent sourceMessage = getMessage(source, LocaleMessage.MESSAGE_SENDER, target.getUsername()).append(content);
-        TextComponent targetMessage = getMessage(target, LocaleMessage.MESSAGE_RECEIVER, sourceName).append(content);
+        Component content = TextComponent.of(context.join(" ", 1));
+        Component sourceMessage = getMessage(source, LocaleMessage.MESSAGE_SENDER, target.getUsername()).append(content);
+        Component targetMessage = getMessage(target, LocaleMessage.MESSAGE_RECEIVER, sourceName).append(content);
 
         source.sendMessage(sourceMessage);
         target.sendMessage(targetMessage);

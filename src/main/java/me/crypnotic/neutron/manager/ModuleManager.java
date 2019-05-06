@@ -36,12 +36,12 @@ import lombok.RequiredArgsConstructor;
 import me.crypnotic.neutron.NeutronPlugin;
 import me.crypnotic.neutron.api.configuration.Configuration;
 import me.crypnotic.neutron.api.module.AbstractModule;
-import me.crypnotic.neutron.api.serializer.TextComponentSerializer;
+import me.crypnotic.neutron.api.serializer.ComponentSerializer;
 import me.crypnotic.neutron.module.announcement.AnnouncementsModule;
 import me.crypnotic.neutron.module.command.CommandModule;
 import me.crypnotic.neutron.module.locale.LocaleModule;
 import me.crypnotic.neutron.module.serverlist.ServerListModule;
-import net.kyori.text.TextComponent;
+import net.kyori.text.Component;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 
@@ -93,7 +93,7 @@ public class ModuleManager {
     }
 
     private void registerSerializers() {
-        TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(TextComponent.class), new TextComponentSerializer());
+        TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(Component.class), new ComponentSerializer());
     }
 
     @Subscribe

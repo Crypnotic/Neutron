@@ -28,7 +28,7 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.kyori.text.TextComponent;
+import net.kyori.text.Component;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
@@ -44,8 +44,8 @@ public class AnnouncementData {
     private boolean maintainOrder;
     @Getter
     @Setting("messages")
-    private List<TextComponent> messages;
+    private List<Component> messages;
     @Getter
     @Setting("prefix")
-    private TextComponent prefix;
+    private Component prefix;
 }

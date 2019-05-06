@@ -51,8 +51,8 @@ public class AnnouncementsModule extends AbstractModule {
 
             AnnouncementData data = ConfigHelper.getSerializable(node, new AnnouncementData());
             if (data != null) {
-                Announcement announcement = Announcement.schedule(getNeutron(), id, data);
-
+                Announcement announcement = Announcement.create(getNeutron(), id, data);
+                
                 announcements.put(id, announcement);
             } else {
                 getNeutron().getLogger().warn("Failed to load announcement list: " + id);

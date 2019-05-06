@@ -24,17 +24,19 @@
 */
 package me.crypnotic.neutron.module.announcement;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import com.velocitypowered.api.scheduler.ScheduledTask;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.crypnotic.neutron.NeutronPlugin;
-import net.kyori.text.TextComponent;
+import me.crypnotic.neutron.util.StringHelper;
+import net.kyori.text.Component;
 
 @RequiredArgsConstructor
 public class Announcement {
@@ -47,32 +49,35 @@ public class Announcement {
 
     @Getter
     private ScheduledTask task;
-    private List<TextComponent> localMessages;
-    private volatile int index = 0;
+    private List<Component> localMessages;
+    private Iterator<Component> iterator;
 
-    private void broadcast() {
-        if (index == 0) {
-            if (localMessages == null) {
-                /* Create a local copy to avoid reading or shuffling the master copy */
-                this.localMessages = new ArrayList<TextComponent>(data.getMessages());
-            }
-
-            if (!data.isMaintainOrder()) {
-                Collections.shuffle(localMessages);
-            }
+    public void init() {
+        if (localMessages == null) {
+            this.localMessages = data.getMessages().stream().map(message -> StringHelper.append(data.getPrefix(), message))
+                    .collect(Collectors.toList());
         }
 
-        plugin.getProxy().broadcast(data.getPrefix().append(localMessages.get(index)));
-
-        index += 1;
-        if (index == localMessages.size()) {
-            index = 0;
+        if (!data.isMaintainOrder()) {
+            Collections.shuffle(localMessages);
         }
+
+        this.iterator = localMessages.iterator();
     }
 
-    public static Announcement schedule(NeutronPlugin neutron, String id, AnnouncementData data) {
+    private void broadcast() {
+        if (!iterator.hasNext()) {
+            init();
+        }
+
+        plugin.getProxy().broadcast(iterator.next());
+    }
+
+    public static Announcement create(NeutronPlugin neutron, String id, AnnouncementData data) {
         Announcement announcement = new Announcement(neutron, id, data);
 
+        announcement.init();
+        
         announcement.task = neutron.getProxy().getScheduler().buildTask(neutron, announcement::broadcast)
                 .repeat(announcement.data.getInterval(), TimeUnit.SECONDS).schedule();
 

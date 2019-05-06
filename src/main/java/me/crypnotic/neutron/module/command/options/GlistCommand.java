@@ -35,6 +35,7 @@ import com.velocitypowered.api.proxy.server.ServerInfo;
 import me.crypnotic.neutron.module.command.CommandContext;
 import me.crypnotic.neutron.module.command.CommandWrapper;
 import me.crypnotic.neutron.module.locale.message.LocaleMessage;
+import net.kyori.text.Component;
 import net.kyori.text.TextComponent;
 import net.kyori.text.event.ClickEvent;
 import net.kyori.text.event.HoverEvent;
@@ -53,7 +54,7 @@ public class GlistCommand extends CommandWrapper {
 
             String playerString = players.stream().map(Player::getUsername).sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.joining(", "));
 
-            TextComponent message = getMessage(source, LocaleMessage.LIST_MESSAGE, info.getName(), players.size());
+            Component message = getMessage(source, LocaleMessage.LIST_MESSAGE, info.getName(), players.size());
 
             message = message.hoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.of(playerString)));
             message = message.clickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/server " + info.getName()));
