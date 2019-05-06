@@ -14,10 +14,6 @@ public interface User<T extends CommandSource> {
 
     void save() throws Exception;
 
-    default boolean isPlayer() {
-        return getBase().isPresent() && getBase().get() instanceof Player;
-    }
-
     String getName();
 
     Optional<UUID> getUUID();
@@ -25,4 +21,8 @@ public interface User<T extends CommandSource> {
     CommandSource getReplyRecipient();
 
     void setReplyRecipient(CommandSource source);
+
+    default boolean isPlayer() {
+        return getBase().isPresent() && getBase().get() instanceof Player;
+    }
 }
