@@ -25,43 +25,27 @@
 package me.crypnotic.neutron.module.announcement;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
-import com.velocitypowered.api.scheduler.ScheduledTask;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import me.crypnotic.neutron.util.StringHelper;
-import net.kyori.text.TextComponent;
-import ninja.leaping.configurate.ConfigurationNode;
+import net.kyori.text.Component;
+import ninja.leaping.configurate.objectmapping.Setting;
+import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
+@ConfigSerializable
 @RequiredArgsConstructor
-public class Announcements {
+public class AnnouncementData {
 
     @Getter
-    private final String id;
+    @Setting("interval")
+    private long interval;
     @Getter
-    private final long interval;
+    @Setting("maintain-order")
+    private boolean maintainOrder;
     @Getter
-    private final boolean maintainOrder;
+    @Setting("messages")
+    private List<Component> messages;
     @Getter
-    private final List<TextComponent> messages;
-    @Getter
-    private final String prefix;
-
-    @Getter
-    @Setter
-    private ScheduledTask task;
-
-    public static Announcements load(String id, ConfigurationNode node) {
-        long interval = node.getNode("interval").getLong();
-        boolean maintainOrder = node.getNode("maintain-order").getBoolean();
-        String prefix = node.getNode("prefix").getString("");
-        
-        List<TextComponent> messages = node.getNode("messages").getList(Object::toString).stream()
-                .map(message -> StringHelper.formatAndColor("{0}{1}", prefix, message)).collect(Collectors.toList());
-
-        return new Announcements(id, interval, maintainOrder, messages, prefix);
-    }
+    @Setting("prefix")
+    private Component prefix;
 }

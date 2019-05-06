@@ -73,7 +73,7 @@ public class NeutronPlugin {
 
         this.userManager = new UserManager(configuration);
         this.moduleManager = new ModuleManager(this, configuration);
-        
+
         if (!userManager.init()) {
             logger.warn("Failed to initialize UserManager. Many features will not work");
         }

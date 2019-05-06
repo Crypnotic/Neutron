@@ -22,44 +22,37 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package me.crypnotic.neutron.module.announcement;
+package me.crypnotic.neutron.api.serializer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.google.common.reflect.TypeToken;
 
-import lombok.RequiredArgsConstructor;
-import me.crypnotic.neutron.NeutronPlugin;
-import net.kyori.text.TextComponent;
+import me.crypnotic.neutron.util.StringHelper;
+import net.kyori.text.Component;
+import net.kyori.text.serializer.ComponentSerializers;
+import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 
-@RequiredArgsConstructor
-public class AnnouncementsTask implements Runnable {
-
-    private final NeutronPlugin plugin;
-    private final Announcements announcements;
-
-    private List<TextComponent> localMessages;
-
-    private volatile int index = 0;
+public class ComponentSerializer implements TypeSerializer<Component> {
 
     @Override
-    public void run() {
-        if (index == 0) {
-            if (localMessages == null) {
-                /* Create a local copy to avoid reading or shuffling the master copy */
-                this.localMessages = new ArrayList<TextComponent>(announcements.getMessages());
-            }
-
-            if (!announcements.isMaintainOrder()) {
-                Collections.shuffle(localMessages);
+    public Component deserialize(TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
+        if (!value.isVirtual()) {
+            String text = value.getString();
+            if (text.startsWith("{")) {
+                return StringHelper.serialize(text);
+            } else {                
+                return StringHelper.color(text);
             }
         }
+        return null;
+    }
 
-        plugin.getProxy().broadcast(localMessages.get(index));
-
-        index += 1;
-        if (index == localMessages.size()) {
-            index = 0;
+    @Override
+    @SuppressWarnings("deprecation")
+    public void serialize(TypeToken<?> type, Component obj, ConfigurationNode value) throws ObjectMappingException {
+        if (obj != null) {
+            value.setValue(ComponentSerializers.LEGACY.serialize(obj, '&'));
         }
     }
 }
