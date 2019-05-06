@@ -8,17 +8,17 @@ import com.velocitypowered.api.proxy.Player;
 
 public interface User<T extends CommandSource> {
 
-    Optional<T> getBase();
-
     void load() throws Exception;
 
     void save() throws Exception;
+    
+    Optional<T> getBase();
 
     String getName();
 
-    Optional<UUID> getUUID();
-
     CommandSource getReplyRecipient();
+    
+    Optional<UUID> getUUID();
 
     void setReplyRecipient(CommandSource source);
 
