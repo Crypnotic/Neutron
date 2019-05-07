@@ -30,7 +30,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import lombok.Getter;
-import me.crypnotic.neutron.api.module.AbstractModule;
+import me.crypnotic.neutron.api.module.Module;
 import me.crypnotic.neutron.module.locale.message.LocaleMessage;
 import me.crypnotic.neutron.module.locale.message.LocaleMessageTable;
 import me.crypnotic.neutron.util.ConfigHelper;
@@ -38,7 +38,7 @@ import me.crypnotic.neutron.util.FileHelper;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
-public class LocaleModule extends AbstractModule {
+public class LocaleModule extends Module {
 
     private LocaleConfig config;
     private File folder;

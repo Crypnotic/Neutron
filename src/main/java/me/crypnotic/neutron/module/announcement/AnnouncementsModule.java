@@ -30,11 +30,11 @@ import java.util.Map;
 import com.velocitypowered.api.scheduler.ScheduledTask;
 
 import me.crypnotic.neutron.api.configuration.Configuration;
-import me.crypnotic.neutron.api.module.AbstractModule;
+import me.crypnotic.neutron.api.module.Module;
 import me.crypnotic.neutron.util.ConfigHelper;
 import ninja.leaping.configurate.ConfigurationNode;
 
-public class AnnouncementsModule extends AbstractModule {
+public class AnnouncementsModule extends Module {
 
     private Configuration configuration;
     private Map<String, Announcement> announcements = new HashMap<String, Announcement>();

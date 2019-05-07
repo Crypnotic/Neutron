@@ -28,7 +28,7 @@ import com.google.common.reflect.TypeToken;
 
 import me.crypnotic.neutron.util.StringHelper;
 import net.kyori.text.Component;
-import net.kyori.text.serializer.ComponentSerializers;
+import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
@@ -49,10 +49,9 @@ public class ComponentSerializer implements TypeSerializer<Component> {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public void serialize(TypeToken<?> type, Component obj, ConfigurationNode value) throws ObjectMappingException {
         if (obj != null) {
-            value.setValue(ComponentSerializers.LEGACY.serialize(obj, '&'));
+            value.setValue(LegacyComponentSerializer.INSTANCE.serialize(obj, '&'));
         }
     }
 }

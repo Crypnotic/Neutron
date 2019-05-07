@@ -10,11 +10,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import me.crypnotic.neutron.api.Neutron;
-import me.crypnotic.neutron.api.user.AbstractUser;
+import me.crypnotic.neutron.api.user.User;
 
 // TODO: Consider whether this should support *any* CommandSource that isn't a player (ie plugin-provided CommandSources)
 @RequiredArgsConstructor
-public class ConsoleUser extends AbstractUser<ConsoleCommandSource> {
+public class ConsoleUser implements User<ConsoleCommandSource> {
 
     @Getter
     private final String name;

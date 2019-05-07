@@ -29,10 +29,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import me.crypnotic.neutron.api.module.AbstractModule;
+import me.crypnotic.neutron.api.command.CommandWrapper;
+import me.crypnotic.neutron.api.module.Module;
 import ninja.leaping.configurate.ConfigurationNode;
 
-public class CommandModule extends AbstractModule {
+public class CommandModule extends Module {
 
     private Map<Commands, CommandWrapper> commands = new HashMap<Commands, CommandWrapper>();
 

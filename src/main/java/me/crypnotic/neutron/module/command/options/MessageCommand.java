@@ -31,8 +31,8 @@ import java.util.stream.Collectors;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 
-import me.crypnotic.neutron.module.command.CommandContext;
-import me.crypnotic.neutron.module.command.CommandWrapper;
+import me.crypnotic.neutron.api.command.CommandContext;
+import me.crypnotic.neutron.api.command.CommandWrapper;
 import me.crypnotic.neutron.module.locale.message.LocaleMessage;
 import net.kyori.text.Component;
 import net.kyori.text.TextComponent;

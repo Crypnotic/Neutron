@@ -22,27 +22,44 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package me.crypnotic.neutron.module.command;
+package me.crypnotic.neutron.api.event;
 
-import java.util.function.Supplier;
+import com.velocitypowered.api.event.ResultedEvent;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import me.crypnotic.neutron.api.command.CommandWrapper;
-import me.crypnotic.neutron.module.command.options.*;
+import lombok.Setter;
+import me.crypnotic.neutron.module.announcement.Announcement;
+import net.kyori.text.Component;
 
-@RequiredArgsConstructor
-public enum Commands {
-    ALERT("alert", AlertCommand::new),
-    FIND("find", FindCommand::new),
-    INFO("info", InfoCommand::new),
-    GLIST("glist", GlistCommand::new),
-    MESSAGE("message", MessageCommand::new),
-    REPLY("reply", ReplyCommand::new),
-    SEND("send", SendCommand::new);
+public final class AnnouncementBroadcastEvent implements ResultedEvent<AnnouncementBroadcastEvent.BroadcastResult> {
 
     @Getter
-    private final String key;
+    private final Announcement announcement;
     @Getter
-    private final Supplier<CommandWrapper> supplier;
+    private final Component message;
+    @Getter
+    @Setter
+    private BroadcastResult result;
+
+    public AnnouncementBroadcastEvent(Announcement announcement, Component message) {
+        this.announcement = announcement;
+        this.message = message;
+        this.result = BroadcastResult.create(message);
+    }
+
+    @AllArgsConstructor
+    public static final class BroadcastResult implements ResultedEvent.Result {
+
+        @Getter
+        @Setter
+        private Component message;
+        @Getter
+        @Setter
+        private boolean allowed;
+
+        public static final BroadcastResult create(Component message) {
+            return new BroadcastResult(message, true);
+        }
+    }
 }
