@@ -33,12 +33,12 @@ public class UserConfig {
 
     @Getter
     @Setting(value = "cache", comment = "Advanced settings controlling how users are kept in memory")
-    private Cache cache;
+    private Cache cache = new Cache();
 
     @Getter
     @Setting(value = "console", comment = "Default settings for the console user")
-    private String console;
-
+    private Console console = new Console();
+    
     @ConfigSerializable
     public static class Cache {
 
@@ -47,7 +47,14 @@ public class UserConfig {
         private int maxSize = 100;
 
         @Getter
-        @Setting(value = "max-size", comment = "How long after its last access a user should stay loaded in minutes")
+        @Setting(value = "expiry", comment = "How long after its last access a user should stay loaded in minutes")
         private int expiryMins = 30;
+    }
+
+    @ConfigSerializable
+    public static class Console {
+        @Getter
+        @Setting(value = "name", comment = "The console user's name")
+        private String name = "Console";
     }
 }

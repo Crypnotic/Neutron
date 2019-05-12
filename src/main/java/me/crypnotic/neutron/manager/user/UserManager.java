@@ -37,7 +37,7 @@ public class UserManager {
 
         initCache();
 
-        this.console = new ConsoleUser(config.getConsole());
+        this.console = new ConsoleUser(config.getConsole().getName());
 
         return true;
     }

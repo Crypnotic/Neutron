@@ -87,6 +87,9 @@ public class ModuleManager {
 
         neutron.getProxy().getEventManager().register(neutron, this);
 
+        // Save configuration after all modules load in order to copy defautl values
+        configuration.save();
+        
         neutron.getLogger().info(String.format("Modules loaded: %d (enabled: %d)", modules.size(), enabled));
 
         return true;

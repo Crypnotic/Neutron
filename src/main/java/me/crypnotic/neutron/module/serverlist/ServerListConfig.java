@@ -42,11 +42,11 @@ public class ServerListConfig {
 
     @Getter
     @Setting("player-count")
-    private PlayerCount playerCount;
+    private PlayerCount playerCount = new PlayerCount();
 
     @Getter
     @Setting("server-preview")
-    private ServerPreview serverPreview;
+    private ServerPreview serverPreview = new ServerPreview();
 
     @ConfigSerializable
     public static class PlayerCount {

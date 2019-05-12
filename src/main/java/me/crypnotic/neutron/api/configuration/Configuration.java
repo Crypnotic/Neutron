@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import me.crypnotic.neutron.util.FileHelper;
 import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 
@@ -90,9 +91,11 @@ public class Configuration {
 
             try {
                 File file = FileHelper.getOrCreate(folder, name);
-                ConfigurationLoader<?> loader = HoconConfigurationLoader.builder().setFile(file).build();
-                ConfigurationNode node = loader.load();
+                ConfigurationLoader<?> loader = HoconConfigurationLoader.builder()
+                        .setDefaultOptions(ConfigurationOptions.defaults().setShouldCopyDefaults(true)).setFile(file).build();
 
+                ConfigurationNode node = loader.load();
+                
                 return new Configuration(folder.toFile(), file, loader, node);
             } catch (IOException exception) {
                 exception.printStackTrace();
