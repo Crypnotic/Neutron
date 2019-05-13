@@ -26,6 +26,7 @@ package me.crypnotic.neutron.module.command.options;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.velocitypowered.api.command.CommandSource;
@@ -33,6 +34,8 @@ import com.velocitypowered.api.proxy.Player;
 
 import me.crypnotic.neutron.api.command.CommandContext;
 import me.crypnotic.neutron.api.command.CommandWrapper;
+import me.crypnotic.neutron.api.event.UserPrivateMessageEvent;
+import me.crypnotic.neutron.api.user.User;
 import me.crypnotic.neutron.module.locale.message.LocaleMessage;
 import net.kyori.text.Component;
 import net.kyori.text.TextComponent;
@@ -53,11 +56,23 @@ public class MessageCommand extends CommandWrapper {
         Component sourceMessage = getMessage(source, LocaleMessage.MESSAGE_SENDER, target.getUsername()).append(content);
         Component targetMessage = getMessage(target, LocaleMessage.MESSAGE_RECEIVER, sourceName).append(content);
 
-        source.sendMessage(sourceMessage);
-        target.sendMessage(targetMessage);
+        final Optional<User<? extends CommandSource>> sender = getUser(source);
+        final Optional<User<? extends CommandSource>> recipient = getUser(target);
 
-        getUser(source).ifPresent(user -> user.setReplyRecipient(target));
-        getUser(target).ifPresent(user -> user.setReplyRecipient(source));
+        UserPrivateMessageEvent event = new UserPrivateMessageEvent(sender, recipient, content, false);
+
+        getNeutron().getProxy().getEventManager().fire(event).thenAccept(resultEvent -> {
+            UserPrivateMessageEvent.PrivateMessageResult result = resultEvent.getResult();
+            if (result.isAllowed()) {
+                source.sendMessage(sourceMessage);
+                target.sendMessage(targetMessage);
+
+                sender.ifPresent(user -> user.setReplyRecipient(target));
+                recipient.ifPresent(user -> user.setReplyRecipient(source));
+            } else {
+                result.getReason().ifPresent(source::sendMessage);
+            }
+        });
     }
 
     @Override

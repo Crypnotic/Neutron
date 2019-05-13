@@ -26,6 +26,7 @@ package me.crypnotic.neutron.module.command.options;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.velocitypowered.api.command.CommandSource;
@@ -33,6 +34,7 @@ import com.velocitypowered.api.proxy.Player;
 
 import me.crypnotic.neutron.api.command.CommandContext;
 import me.crypnotic.neutron.api.command.CommandWrapper;
+import me.crypnotic.neutron.api.event.UserPrivateMessageEvent;
 import me.crypnotic.neutron.api.user.User;
 import me.crypnotic.neutron.module.locale.message.LocaleMessage;
 import net.kyori.text.Component;
@@ -55,10 +57,22 @@ public class ReplyCommand extends CommandWrapper {
         Component sourceMessage = getMessage(source, LocaleMessage.MESSAGE_SENDER, targetName).append(content);
         Component targetMessage = getMessage(target, LocaleMessage.MESSAGE_RECEIVER, sourceName).append(content);
 
-        source.sendMessage(sourceMessage);
-        target.sendMessage(targetMessage);
+        final Optional<User<? extends CommandSource>> sender = getUser(source);
+        final Optional<User<? extends CommandSource>> recipient = getUser(target);
 
-        getUser(target).ifPresent(user -> user.setReplyRecipient(source));
+        UserPrivateMessageEvent event = new UserPrivateMessageEvent(sender, recipient, content, true);
+
+        getNeutron().getProxy().getEventManager().fire(event).thenAccept(resultEvent -> {
+            UserPrivateMessageEvent.PrivateMessageResult result = resultEvent.getResult();
+            if (result.isAllowed()) {
+                source.sendMessage(sourceMessage);
+                target.sendMessage(targetMessage);
+
+                recipient.ifPresent(user -> user.setReplyRecipient(source));
+            } else {
+                result.getReason().ifPresent(source::sendMessage);
+            }
+        });
     }
 
     @Override
