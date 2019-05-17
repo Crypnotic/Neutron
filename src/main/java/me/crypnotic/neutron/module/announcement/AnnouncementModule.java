@@ -34,7 +34,7 @@ import me.crypnotic.neutron.api.module.Module;
 import me.crypnotic.neutron.util.ConfigHelper;
 import ninja.leaping.configurate.ConfigurationNode;
 
-public class AnnouncementsModule extends Module {
+public class AnnouncementModule extends Module {
 
     private Configuration configuration;
     private Map<String, Announcement> announcements = new HashMap<String, Announcement>();

@@ -37,7 +37,7 @@ import me.crypnotic.neutron.NeutronPlugin;
 import me.crypnotic.neutron.api.configuration.Configuration;
 import me.crypnotic.neutron.api.module.Module;
 import me.crypnotic.neutron.api.serializer.ComponentSerializer;
-import me.crypnotic.neutron.module.announcement.AnnouncementsModule;
+import me.crypnotic.neutron.module.announcement.AnnouncementModule;
 import me.crypnotic.neutron.module.command.CommandModule;
 import me.crypnotic.neutron.module.locale.LocaleModule;
 import me.crypnotic.neutron.module.serverlist.ServerListModule;
@@ -54,7 +54,7 @@ public class ModuleManager {
     private Map<Class<? extends Module>, Module> modules = new HashMap<Class<? extends Module>, Module>();
 
     public boolean init() {
-        modules.put(AnnouncementsModule.class, new AnnouncementsModule());
+        modules.put(AnnouncementModule.class, new AnnouncementModule());
         modules.put(CommandModule.class, new CommandModule());
         modules.put(LocaleModule.class, new LocaleModule());
         modules.put(ServerListModule.class, new ServerListModule());
@@ -87,7 +87,7 @@ public class ModuleManager {
 
         neutron.getProxy().getEventManager().register(neutron, this);
 
-        // Save configuration after all modules load in order to copy defautl values
+        // Save configuration after all modules load in order to copy default values
         configuration.save();
         
         neutron.getLogger().info(String.format("Modules loaded: %d (enabled: %d)", modules.size(), enabled));
