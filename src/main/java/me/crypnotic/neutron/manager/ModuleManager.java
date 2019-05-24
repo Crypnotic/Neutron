@@ -38,6 +38,7 @@ import me.crypnotic.neutron.api.module.Module;
 import me.crypnotic.neutron.api.serializer.ComponentSerializer;
 import me.crypnotic.neutron.module.announcement.AnnouncementModule;
 import me.crypnotic.neutron.module.command.CommandModule;
+import me.crypnotic.neutron.module.connectmessage.ConnectMessageModule;
 import me.crypnotic.neutron.module.serverlist.ServerListModule;
 import net.kyori.text.Component;
 import ninja.leaping.configurate.ConfigurationNode;
@@ -54,6 +55,7 @@ public class ModuleManager implements Reloadable {
     @Override
     public StateResult init() {
         modules.put(AnnouncementModule.class, new AnnouncementModule());
+        modules.put(ConnectMessageModule.class, new ConnectMessageModule());
         modules.put(CommandModule.class, new CommandModule());
         modules.put(ServerListModule.class, new ServerListModule());
 
