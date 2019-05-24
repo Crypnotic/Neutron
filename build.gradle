@@ -55,8 +55,8 @@ publishing {
 	}
 	
 	repositories {
-		def releasesRepoUrl = System.getenv('releasesRepoUrl')
-		def snapshotsRepoUrl = System.getenv('snapshotsRepoUrl')
+		def releasesRepoUrl = System.getenv('mavenUrl')
+		def snapshotsRepoUrl = System.getenv('mavenSnapshotUrl')
 		    
 		def url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 		
