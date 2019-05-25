@@ -32,6 +32,7 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.crypnotic.neutron.NeutronPlugin;
+import me.crypnotic.neutron.api.Reloadable;
 import me.crypnotic.neutron.api.StateResult;
 import me.crypnotic.neutron.api.configuration.Configuration;
 import me.crypnotic.neutron.api.locale.LocaleMessage;
@@ -42,7 +43,7 @@ import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
 @RequiredArgsConstructor
-public class LocaleManager {
+public class LocaleManager implements Reloadable {
 
     private final NeutronPlugin neutron;
     private final Configuration configuration;
@@ -53,6 +54,7 @@ public class LocaleManager {
     @Getter
     private Locale defaultLocale;
 
+    @Override
     public StateResult init() {
         this.config = ConfigHelper.getSerializable(configuration.getNode("locale"), new LocaleConfig());
         if (config == null) {
@@ -144,13 +146,20 @@ public class LocaleManager {
         }
     }
 
+    @Override
     public StateResult reload() {
         return StateResult.of(shutdown(), init());
     }
 
+    @Override
     public StateResult shutdown() {
         locales.clear();
 
         return StateResult.success();
+    }
+
+    @Override
+    public String getName() {
+        return "LocaleManager";
     }
 }

@@ -31,6 +31,7 @@ import com.google.common.reflect.TypeToken;
 
 import lombok.RequiredArgsConstructor;
 import me.crypnotic.neutron.NeutronPlugin;
+import me.crypnotic.neutron.api.Reloadable;
 import me.crypnotic.neutron.api.StateResult;
 import me.crypnotic.neutron.api.configuration.Configuration;
 import me.crypnotic.neutron.api.module.Module;
@@ -43,13 +44,14 @@ import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 
 @RequiredArgsConstructor
-public class ModuleManager {
+public class ModuleManager implements Reloadable {
 
     private final NeutronPlugin neutron;
     private final Configuration configuration;
 
     private Map<Class<? extends Module>, Module> modules = new HashMap<Class<? extends Module>, Module>();
 
+    @Override
     public StateResult init() {
         modules.put(AnnouncementModule.class, new AnnouncementModule());
         modules.put(CommandModule.class, new CommandModule());
@@ -67,7 +69,7 @@ public class ModuleManager {
 
             module.setEnabled(node.getNode("enabled").getBoolean());
             if (module.isEnabled()) {
-                if (module.init()) {
+                if (module.init().isSuccess()) {
                     enabled += 1;
 
                     continue;
@@ -91,6 +93,7 @@ public class ModuleManager {
         return StateResult.success();
     }
 
+    @Override
     public StateResult reload() {
         if (!configuration.reload()) {
             neutron.getLogger().warn("Failed to reload config on proxy reload");
@@ -113,7 +116,7 @@ public class ModuleManager {
             } else if (newState) {
                 module.setEnabled(newState);
 
-                if (module.reload()) {
+                if (module.reload().isSuccess()) {
                     enabled += 1;
 
                     continue;
@@ -132,6 +135,7 @@ public class ModuleManager {
         return StateResult.success();
     }
 
+    @Override
     public StateResult shutdown() {
         neutron.getLogger().info("Shutting down active modules...");
 
@@ -154,5 +158,10 @@ public class ModuleManager {
 
     public ConfigurationNode getRoot() {
         return configuration.getNode();
+    }
+
+    @Override
+    public String getName() {
+        return "ModuleManager";
     }
 }

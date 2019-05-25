@@ -22,31 +22,15 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package me.crypnotic.neutron.event;
+package me.crypnotic.neutron.api;
 
-import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.proxy.ProxyReloadEvent;
-import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
+public interface Reloadable {
 
-import lombok.RequiredArgsConstructor;
-import me.crypnotic.neutron.NeutronPlugin;
-
-@RequiredArgsConstructor
-public class StateListener {
-
-    private final NeutronPlugin neutron;
-
-    @Subscribe
-    public void onProxyReload(ProxyReloadEvent event) {
-        neutron.getLocaleManager().reload().fail("Failed to reload LocaleManager. Many features may not work");
-        neutron.getUserManager().reload().fail("Failed to reload UserManager. Many features may not work");
-        neutron.getModuleManager().reload().fail("Failed to reload ModuleManager. Many features may not work");
-    }
-
-    @Subscribe
-    public void onProxyShutdown(ProxyShutdownEvent event) {
-        neutron.getLocaleManager().shutdown().fail("Failed to shutdown LocaleManager!");
-        neutron.getUserManager().shutdown().fail("Failed to shutdown UserManager!");
-        neutron.getModuleManager().shutdown().fail("Failed to shutdown ModuleManager!");
-    }
+    StateResult init();
+    
+    StateResult reload();
+    
+    StateResult shutdown();
+    
+    String getName();
 }

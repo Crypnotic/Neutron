@@ -38,7 +38,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
 import me.crypnotic.neutron.api.Neutron;
 import me.crypnotic.neutron.api.configuration.Configuration;
-import me.crypnotic.neutron.event.StateListener;
+import me.crypnotic.neutron.event.StateHandler;
 import me.crypnotic.neutron.manager.ModuleManager;
 import me.crypnotic.neutron.manager.locale.LocaleManager;
 import me.crypnotic.neutron.manager.user.UserManager;
@@ -60,6 +60,8 @@ public class NeutronPlugin {
     @Getter
     private Configuration configuration;
 
+    private StateHandler stateHandler;
+    
     @Getter
     private LocaleManager localeManager;
     @Getter
@@ -75,14 +77,14 @@ public class NeutronPlugin {
     public void onProxyInitialize(ProxyInitializeEvent event) {
         this.configuration = Configuration.builder().folder(dataFolderPath).name("config.conf").build();
         
+        this.stateHandler = new StateHandler(this);
+        
         this.localeManager = new LocaleManager(this, configuration);
         this.userManager = new UserManager(configuration);
         this.moduleManager = new ModuleManager(this, configuration);
         
-        localeManager.init().fail("Failed to initialize LocaleManager. Many features may not work");
-        userManager.init().fail("Failed to initialize UserManager. Many features may not work");
-        moduleManager.init().fail("Failed to initialize ModuleManager. Many features may not work");
+        stateHandler.init();
         
-        proxy.getEventManager().register(this, new StateListener(this));
+        proxy.getEventManager().register(this, new StateHandler(this));
     }
 }

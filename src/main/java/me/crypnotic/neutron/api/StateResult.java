@@ -29,6 +29,7 @@ import java.util.concurrent.Executors;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.crypnotic.neutron.util.StringHelper;
 
 @RequiredArgsConstructor
 public class StateResult {
@@ -60,12 +61,12 @@ public class StateResult {
         run(runnable);
     }
 
-    public void success(String message) {
-        Neutron.getNeutron().getLogger().info(message);
+    public void success(String message, Object... values) {
+        Neutron.getNeutron().getLogger().info(StringHelper.format(message, values));
     }
 
-    public void fail(String message) {
-        Neutron.getNeutron().getLogger().warn(message);
+    public void fail(String message, Object... values) {
+        Neutron.getNeutron().getLogger().warn(StringHelper.format(message, values));
     }
     
     public static StateResult success() {

@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import me.crypnotic.neutron.api.StateResult;
 import me.crypnotic.neutron.api.command.CommandWrapper;
 import me.crypnotic.neutron.api.module.Module;
 import ninja.leaping.configurate.ConfigurationNode;
@@ -38,11 +39,11 @@ public class CommandModule extends Module {
     private Map<Commands, CommandWrapper> commands = new HashMap<Commands, CommandWrapper>();
 
     @Override
-    public boolean init() {
+    public StateResult init() {
         ConfigurationNode options = getRootNode().getNode("options");
         if (options.isVirtual()) {
             getNeutron().getLogger().warn("No config entry found for command module options");
-            return false;
+            return StateResult.fail();
         }
 
         for (Commands spec : Commands.values()) {
@@ -66,22 +67,22 @@ public class CommandModule extends Module {
             commands.put(spec, wrapper);
         }
 
-        return true;
+        return StateResult.success();
     }
 
     @Override
-    public boolean reload() {
-        return shutdown() && init();
+    public StateResult reload() {
+        return StateResult.of(shutdown(), init());
     }
 
     @Override
-    public boolean shutdown() {
+    public StateResult shutdown() {
         commands.values().stream().map(CommandWrapper::getAliases).flatMap(Arrays::stream)
                 .forEach(getNeutron().getProxy().getCommandManager()::unregister);
 
         commands.clear();
 
-        return true;
+        return StateResult.success();
     }
 
     @Override

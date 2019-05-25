@@ -28,19 +28,14 @@ import lombok.Getter;
 import lombok.Setter;
 import me.crypnotic.neutron.NeutronPlugin;
 import me.crypnotic.neutron.api.Neutron;
+import me.crypnotic.neutron.api.Reloadable;
 import ninja.leaping.configurate.ConfigurationNode;
 
-public abstract class Module {
+public abstract class Module implements Reloadable {
 
     @Getter
     @Setter
     private boolean enabled;
-
-    public abstract boolean init();
-
-    public abstract boolean reload();
-
-    public abstract boolean shutdown();
 
     public abstract String getName();
 

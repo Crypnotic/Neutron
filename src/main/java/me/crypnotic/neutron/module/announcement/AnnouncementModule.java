@@ -29,6 +29,7 @@ import java.util.Map;
 
 import com.velocitypowered.api.scheduler.ScheduledTask;
 
+import me.crypnotic.neutron.api.StateResult;
 import me.crypnotic.neutron.api.configuration.Configuration;
 import me.crypnotic.neutron.api.module.Module;
 import me.crypnotic.neutron.util.ConfigHelper;
@@ -39,7 +40,7 @@ public class AnnouncementModule extends Module {
     private Configuration configuration;
     private Map<String, Announcement> announcements = new HashMap<String, Announcement>();
 
-    public boolean init() {
+    public StateResult init() {
         this.configuration = Configuration.builder().folder(getNeutron().getDataFolderPath()).name("announcements.conf").build();
 
         for (ConfigurationNode node : configuration.getNode().getChildrenMap().values()) {
@@ -61,21 +62,21 @@ public class AnnouncementModule extends Module {
 
         getNeutron().getLogger().info("Announcements loaded: " + announcements.size());
 
-        return true;
+        return StateResult.success();
     }
 
     @Override
-    public boolean reload() {
-        return shutdown() && init();
+    public StateResult reload() {
+        return StateResult.of(shutdown(), init());
     }
 
     @Override
-    public boolean shutdown() {
+    public StateResult shutdown() {
         announcements.values().stream().map(Announcement::getTask).forEach(ScheduledTask::cancel);
 
         announcements.clear();
 
-        return true;
+        return StateResult.success();
     }
 
     @Override

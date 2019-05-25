@@ -34,6 +34,7 @@ import com.velocitypowered.api.proxy.server.ServerPing.Players;
 import com.velocitypowered.api.scheduler.ScheduledTask;
 
 import lombok.Getter;
+import me.crypnotic.neutron.api.StateResult;
 import me.crypnotic.neutron.api.module.Module;
 import me.crypnotic.neutron.module.serverlist.ServerListConfig.PlayerCount;
 import me.crypnotic.neutron.util.ConfigHelper;
@@ -47,10 +48,10 @@ public class ServerListModule extends Module {
     private int maxPlayerPing;
 
     @Override
-    public boolean init() {
+    public StateResult init() {
         this.config = ConfigHelper.getSerializable(getRootNode(), new ServerListConfig());
         if (config == null) {
-            return false;
+            return StateResult.fail();
         }
 
         getNeutron().getProxy().getEventManager().register(getNeutron(), new ServerListHandler(this, config));
@@ -59,21 +60,21 @@ public class ServerListModule extends Module {
             this.pingTask = getNeutron().getProxy().getScheduler().buildTask(getNeutron(), new PingTask()).repeat(5, TimeUnit.MINUTES).schedule();
         }
 
-        return true;
+        return StateResult.success();
     }
 
     @Override
-    public boolean reload() {
-        return init();
+    public StateResult reload() {
+        return StateResult.of(shutdown(), init());
     }
 
     @Override
-    public boolean shutdown() {
+    public StateResult shutdown() {
         if (pingTask != null) {
             pingTask.cancel();
         }
 
-        return true;
+        return StateResult.success();
     }
 
     @Override

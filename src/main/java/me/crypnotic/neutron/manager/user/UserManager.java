@@ -37,6 +37,7 @@ import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 
 import lombok.RequiredArgsConstructor;
+import me.crypnotic.neutron.api.Reloadable;
 import me.crypnotic.neutron.api.StateResult;
 import me.crypnotic.neutron.api.configuration.Configuration;
 import me.crypnotic.neutron.api.user.User;
@@ -46,7 +47,7 @@ import me.crypnotic.neutron.util.ConfigHelper;
 
 // TODO: Should the module be responsible solely for storing data?
 @RequiredArgsConstructor
-public class UserManager {
+public class UserManager implements Reloadable {
 
     private final Configuration configuration;
 
@@ -54,6 +55,7 @@ public class UserManager {
     private LoadingCache<UUID, PlayerUser> players;
     private ConsoleUser console;
 
+    @Override
     public StateResult init() {
         this.config = ConfigHelper.getSerializable(configuration.getNode("user"), new UserConfig());
         if (config == null) {
@@ -96,10 +98,12 @@ public class UserManager {
         });
     }
 
+    @Override
     public StateResult reload() {
         return StateResult.of(shutdown(), init());
     }
 
+    @Override
     public StateResult shutdown() {
         players.cleanUp();
 
@@ -122,5 +126,10 @@ public class UserManager {
             return Optional.of(console);
         }
         return Optional.empty();
+    }
+
+    @Override
+    public String getName() {
+        return "UserManager";
     }
 }
