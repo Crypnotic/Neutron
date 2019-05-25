@@ -45,11 +45,9 @@ blossom {
 
 publishing {
 	publications {
-	    maven(MavenPublication) { 
-	    	from components.java 
-	    	
-	    	artifact "Neutron-*"
-	    }
+	    shadow(MavenPublication) { publication ->
+      		project.shadow.component(publication)
+    	}
 	}
 	
 	repositories {
