@@ -22,7 +22,7 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package me.crypnotic.neutron.module.locale.message;
+package me.crypnotic.neutron.api.locale;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -30,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 import me.crypnotic.neutron.api.command.CommandContext;
 import me.crypnotic.neutron.api.command.CommandWrapper;
 import me.crypnotic.neutron.api.event.AlertBroadcastEvent;
-import me.crypnotic.neutron.module.locale.message.LocaleMessage;
+import me.crypnotic.neutron.api.locale.LocaleMessage;
 import net.kyori.text.Component;
 
 @RequiredArgsConstructor

@@ -28,18 +28,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.reflect.TypeToken;
-import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.proxy.ProxyReloadEvent;
-import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 
 import lombok.RequiredArgsConstructor;
 import me.crypnotic.neutron.NeutronPlugin;
+import me.crypnotic.neutron.api.StateResult;
 import me.crypnotic.neutron.api.configuration.Configuration;
 import me.crypnotic.neutron.api.module.Module;
 import me.crypnotic.neutron.api.serializer.ComponentSerializer;
 import me.crypnotic.neutron.module.announcement.AnnouncementModule;
 import me.crypnotic.neutron.module.command.CommandModule;
-import me.crypnotic.neutron.module.locale.LocaleModule;
 import me.crypnotic.neutron.module.serverlist.ServerListModule;
 import net.kyori.text.Component;
 import ninja.leaping.configurate.ConfigurationNode;
@@ -53,10 +50,9 @@ public class ModuleManager {
 
     private Map<Class<? extends Module>, Module> modules = new HashMap<Class<? extends Module>, Module>();
 
-    public boolean init() {
+    public StateResult init() {
         modules.put(AnnouncementModule.class, new AnnouncementModule());
         modules.put(CommandModule.class, new CommandModule());
-        modules.put(LocaleModule.class, new LocaleModule());
         modules.put(ServerListModule.class, new ServerListModule());
 
         registerSerializers();
@@ -89,18 +85,13 @@ public class ModuleManager {
 
         // Save configuration after all modules load in order to copy default values
         configuration.save();
-        
+
         neutron.getLogger().info(String.format("Modules loaded: %d (enabled: %d)", modules.size(), enabled));
 
-        return true;
+        return StateResult.success();
     }
 
-    private void registerSerializers() {
-        TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(Component.class), new ComponentSerializer());
-    }
-
-    @Subscribe
-    public void onProxyReload(ProxyReloadEvent event) {
+    public StateResult reload() {
         if (!configuration.reload()) {
             neutron.getLogger().warn("Failed to reload config on proxy reload");
         }
@@ -137,17 +128,24 @@ public class ModuleManager {
         }
 
         neutron.getLogger().info(String.format("Modules reloaded: %d (enabled: %d)", modules.size(), enabled));
+
+        return StateResult.success();
     }
 
-    @Subscribe
-    public void onProxyShutdown(ProxyShutdownEvent event) {
+    public StateResult shutdown() {
         neutron.getLogger().info("Shutting down active modules...");
 
         modules.values().stream().filter(Module::isEnabled).forEach(Module::shutdown);
+
+        return StateResult.success();
     }
 
-    public boolean save() {
-        return configuration.save();
+    private void registerSerializers() {
+        TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(Component.class), new ComponentSerializer());
+    }
+
+    public StateResult save() {
+        return StateResult.of(configuration.save());
     }
 
     public <T extends Module> T get(Class<T> clazz) {

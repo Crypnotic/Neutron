@@ -38,7 +38,9 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
 import me.crypnotic.neutron.api.Neutron;
 import me.crypnotic.neutron.api.configuration.Configuration;
+import me.crypnotic.neutron.event.StateListener;
 import me.crypnotic.neutron.manager.ModuleManager;
+import me.crypnotic.neutron.manager.locale.LocaleManager;
 import me.crypnotic.neutron.manager.user.UserManager;
 
 @Plugin(id = "@ID@", name = "@NAME@", version = "@VERSION@", description = "@DESCRIPTION@")
@@ -59,6 +61,8 @@ public class NeutronPlugin {
     private Configuration configuration;
 
     @Getter
+    private LocaleManager localeManager;
+    @Getter
     private ModuleManager moduleManager;
     @Getter
     private UserManager userManager;
@@ -70,16 +74,15 @@ public class NeutronPlugin {
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
         this.configuration = Configuration.builder().folder(dataFolderPath).name("config.conf").build();
-
+        
+        this.localeManager = new LocaleManager(this, configuration);
         this.userManager = new UserManager(configuration);
         this.moduleManager = new ModuleManager(this, configuration);
-
-        if (!userManager.init()) {
-            logger.warn("Failed to initialize UserManager. Many features will not work");
-        }
-
-        if (!moduleManager.init()) {
-            logger.warn("Failed to initialize ModuleManager. Many features will not work");
-        }
+        
+        localeManager.init().fail("Failed to initialize LocaleManager. Many features may not work");
+        userManager.init().fail("Failed to initialize UserManager. Many features may not work");
+        moduleManager.init().fail("Failed to initialize ModuleManager. Many features may not work");
+        
+        proxy.getEventManager().register(this, new StateListener(this));
     }
 }

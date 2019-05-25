@@ -22,7 +22,7 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package me.crypnotic.neutron.module.locale;
+package me.crypnotic.neutron.manager.locale;
 
 import java.io.File;
 import java.util.HashMap;
@@ -30,15 +30,22 @@ import java.util.Locale;
 import java.util.Map;
 
 import lombok.Getter;
-import me.crypnotic.neutron.api.module.Module;
-import me.crypnotic.neutron.module.locale.message.LocaleMessage;
-import me.crypnotic.neutron.module.locale.message.LocaleMessageTable;
+import lombok.RequiredArgsConstructor;
+import me.crypnotic.neutron.NeutronPlugin;
+import me.crypnotic.neutron.api.StateResult;
+import me.crypnotic.neutron.api.configuration.Configuration;
+import me.crypnotic.neutron.api.locale.LocaleMessage;
+import me.crypnotic.neutron.api.locale.LocaleMessageTable;
 import me.crypnotic.neutron.util.ConfigHelper;
 import me.crypnotic.neutron.util.FileHelper;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
-public class LocaleModule extends Module {
+@RequiredArgsConstructor
+public class LocaleManager {
+
+    private final NeutronPlugin neutron;
+    private final Configuration configuration;
 
     private LocaleConfig config;
     private File folder;
@@ -46,24 +53,33 @@ public class LocaleModule extends Module {
     @Getter
     private Locale defaultLocale;
 
-    @Override
-    public boolean init() {
-        this.config = ConfigHelper.getSerializable(getRootNode(), new LocaleConfig());
+    public StateResult init() {
+        this.config = ConfigHelper.getSerializable(configuration.getNode("locale"), new LocaleConfig());
         if (config == null) {
-            return false;
+            return StateResult.fail();
         }
 
-        this.folder = FileHelper.getOrCreateDirectory(getNeutron().getDataFolderPath(), "locales");
+        if (!config.isEnabled()) {
+            neutron.getLogger().info("LocaleManager has been disabled. Only loading messages from default presets.");
+            return StateResult.success();
+        }
+
+        this.folder = FileHelper.getOrCreateDirectory(neutron.getDataFolderPath(), "locales");
 
         loadDefaultLocale();
+
+        if (!config.isAllowTranslations()) {
+            neutron.getLogger().info("Locale tranlations have been disabled. Only loading messages from default locale.");
+            return StateResult.success();
+        }
 
         for (File file : folder.listFiles()) {
             loadMessageTable(file);
         }
 
-        getNeutron().getLogger().info("Locales loaded: " + locales.size());
+        neutron.getLogger().info("Locales loaded: " + locales.size());
 
-        return true;
+        return StateResult.success();
     }
 
     public LocaleMessageTable get(Locale locale) {
@@ -84,16 +100,16 @@ public class LocaleModule extends Module {
             File defaultLocaleFile = FileHelper.getOrCreateLocale(folder.toPath(), fallbackLocaleName + ".conf");
             if (defaultLocaleFile != null) {
                 loadMessageTable(defaultLocaleFile);
-                getNeutron().getLogger().info("Loaded fallback locale: " + fallbackLocaleName);
+                neutron.getLogger().info("Loaded fallback locale: " + fallbackLocaleName);
 
                 return;
             } else {
-                getNeutron().getLogger().warn("Could not find file for locale: " + fallbackLocaleName);
-                getNeutron().getLogger().warn("Falling back to en_US");
+                neutron.getLogger().warn("Could not find file for locale: " + fallbackLocaleName);
+                neutron.getLogger().warn("Falling back to en_US");
             }
         } else {
-            getNeutron().getLogger().warn("Unknown fallback locale specified: " + fallbackLocaleName);
-            getNeutron().getLogger().warn("Falling back to en_US");
+            neutron.getLogger().warn("Unknown fallback locale specified: " + fallbackLocaleName);
+            neutron.getLogger().warn("Falling back to en_US");
         }
 
         this.defaultLocale = Locale.forLanguageTag("en_US");
@@ -105,7 +121,7 @@ public class LocaleModule extends Module {
             String name = file.getName().split("\\.")[0];
             Locale locale = Locale.forLanguageTag(name);
             if (locale == null) {
-                getNeutron().getLogger().warn("Unknown locale attempted to load: " + name);
+                neutron.getLogger().warn("Unknown locale attempted to load: " + name);
                 return;
             }
 
@@ -128,20 +144,13 @@ public class LocaleModule extends Module {
         }
     }
 
-    @Override
-    public boolean reload() {
-        return shutdown() && init();
+    public StateResult reload() {
+        return StateResult.of(shutdown(), init());
     }
 
-    @Override
-    public boolean shutdown() {
+    public StateResult shutdown() {
         locales.clear();
 
-        return true;
-    }
-
-    @Override
-    public String getName() {
-        return "locale";
+        return StateResult.success();
     }
 }

@@ -34,7 +34,7 @@ import com.velocitypowered.api.proxy.ServerConnection;
 
 import me.crypnotic.neutron.api.command.CommandContext;
 import me.crypnotic.neutron.api.command.CommandWrapper;
-import me.crypnotic.neutron.module.locale.message.LocaleMessage;
+import me.crypnotic.neutron.api.locale.LocaleMessage;
 
 public class FindCommand extends CommandWrapper {
 

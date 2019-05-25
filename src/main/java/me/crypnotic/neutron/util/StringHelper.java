@@ -25,10 +25,17 @@
 package me.crypnotic.neutron.util;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.ServerPing.SamplePlayer;
 
+import me.crypnotic.neutron.api.Neutron;
+import me.crypnotic.neutron.api.locale.LocaleMessage;
+import me.crypnotic.neutron.api.locale.LocaleMessageTable;
+import me.crypnotic.neutron.manager.locale.LocaleManager;
 import net.kyori.text.Component;
 import net.kyori.text.TextComponent;
 import net.kyori.text.format.Style;
@@ -81,5 +88,23 @@ public class StringHelper {
             result[i] = new SamplePlayer(LegacyComponentSerializer.INSTANCE.serialize(color(input.get(i))), UUID.randomUUID());
         }
         return result;
+    }
+
+    public static void message(CommandSource source, LocaleMessage message, Object... values) {
+        source.sendMessage(getMessage(source, message, values));
+    }
+
+    public static Component getMessage(CommandSource source, LocaleMessage message, Object... values) {
+        LocaleManager manager = Neutron.getNeutron().getLocaleManager();
+        Locale locale = manager.getDefaultLocale();
+        if (source instanceof Player) {
+            locale = ((Player) source).getPlayerSettings().getLocale();
+        }
+
+        LocaleMessageTable table = manager.get(locale);
+        if (table != null) {
+            return table.get(message, values);
+        }
+        return StringHelper.formatAndColor(message.getDefaultMessage(), values);
     }
 }

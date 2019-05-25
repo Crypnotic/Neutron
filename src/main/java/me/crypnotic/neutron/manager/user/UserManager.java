@@ -37,6 +37,7 @@ import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 
 import lombok.RequiredArgsConstructor;
+import me.crypnotic.neutron.api.StateResult;
 import me.crypnotic.neutron.api.configuration.Configuration;
 import me.crypnotic.neutron.api.user.User;
 import me.crypnotic.neutron.manager.user.holder.ConsoleUser;
@@ -53,17 +54,17 @@ public class UserManager {
     private LoadingCache<UUID, PlayerUser> players;
     private ConsoleUser console;
 
-    public boolean init() {
+    public StateResult init() {
         this.config = ConfigHelper.getSerializable(configuration.getNode("user"), new UserConfig());
         if (config == null) {
-            return false;
+            return StateResult.fail();
         }
 
         initCache();
 
         this.console = new ConsoleUser(config.getConsole().getName());
 
-        return true;
+        return StateResult.success();
     }
 
     private void initCache() {
@@ -93,6 +94,16 @@ public class UserManager {
                 return user;
             }
         });
+    }
+
+    public StateResult reload() {
+        return StateResult.of(shutdown(), init());
+    }
+
+    public StateResult shutdown() {
+        players.cleanUp();
+
+        return StateResult.success();
     }
 
     public Optional<User<? extends CommandSource>> getUser(UUID uuid) {

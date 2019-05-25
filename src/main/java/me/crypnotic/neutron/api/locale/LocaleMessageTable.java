@@ -22,16 +22,32 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package me.crypnotic.neutron.module.locale;
+package me.crypnotic.neutron.api.locale;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import lombok.Getter;
-import ninja.leaping.configurate.objectmapping.Setting;
-import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+import lombok.RequiredArgsConstructor;
+import me.crypnotic.neutron.util.StringHelper;
+import net.kyori.text.Component;
 
-@ConfigSerializable
-public class LocaleConfig {
+@RequiredArgsConstructor
+public class LocaleMessageTable {
 
     @Getter
-    @Setting("fallback-locale")
-    private String fallbackLocale = "en-US";
+    private final Locale locale;
+    private final Map<LocaleMessage, String> messages = new HashMap<LocaleMessage, String>();
+
+    public Component get(LocaleMessage key, Object... values) {
+        String message = messages.get(key);
+
+        return StringHelper.formatAndColor(message != null ? message : key.getDefaultMessage(), values);
+    }
+
+    public boolean set(LocaleMessage key, String message) {
+        /* Return true if no entry existed previously */
+        return messages.put(key, message) == null;
+    }
 }
