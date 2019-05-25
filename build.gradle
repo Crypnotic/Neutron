@@ -51,16 +51,16 @@ publishing {
 	}
 	
 	repositories {
-		maven {
-			def mavenUsername = System.getenv('mavenUsername')
-			def mavenPassword = System.getenv('mavenPassword')
-			if (mavenUsername != null && mavenPassword != null) {
-				credentials {
-					username = mavenUsername
-					password = mavenPassword
-				}
+		def mavenUsername = System.getenv('mavenUsername')
+		def mavenPassword = System.getenv('mavenPassword')
+		if (mavenUsername != null && mavenPassword != null) {
+			credentials {
+				username = mavenUsername
+				password = mavenPassword
 			}
+		}
 		
+		maven {
 			def releasesRepoUrl = System.getenv('mavenUrl')
 			def snapshotsRepoUrl = System.getenv('mavenSnapshotUrl')
 			
