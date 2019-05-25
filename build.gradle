@@ -47,6 +47,8 @@ publishing {
 	publications {
 	    maven(MavenPublication) { 
 	    	from components.java 
+	    	
+	    	artifact "Neutron-*"
 	    }
 	}
 	
@@ -59,8 +61,8 @@ publishing {
 				password = mavenPassword
 			}
 		}
-		
-		maven {
+			
+		maven(url) {
 			def releasesRepoUrl = System.getenv('mavenUrl')
 			def snapshotsRepoUrl = System.getenv('mavenSnapshotUrl')
 			
