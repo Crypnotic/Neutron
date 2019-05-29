@@ -50,12 +50,14 @@ public class PlayerUser implements User<Player> {
 
     @Override
     public String getName() {
-        Optional<Player> base = getBase();
-        if (base.isPresent()) {
-            return base.get().getUsername();
-        }
+        String nickname = getNickname();
+        return nickname == null ? getUsername() : "~" + nickname;
+    }
 
-        return data.getUsername();
+    @Override
+    public String getNickname() {
+        String nickname = data.getNickname();
+        return nickname == null || nickname.isEmpty() ? null : nickname;
     }
 
     @Override
@@ -63,8 +65,20 @@ public class PlayerUser implements User<Player> {
         return Optional.of(uuid);
     }
 
+    @Override
+    public void setNickname(String nickname) {
+        data.setNickname(nickname);
+    }
+
     public CommandSource getReplyRecipient() {
         return data.getReplyRecipient();
+    }
+
+    @Override
+    public String getUsername() {
+        Optional<Player> base = getBase();
+        return base.isPresent() ? base.get().getUsername() : data.getUsername();
+
     }
 
     public void setReplyRecipient(CommandSource source) {

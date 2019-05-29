@@ -19,15 +19,18 @@ class PlayerData {
     @Setting(comment = "The player's last known username.")
     private String username;
 
+    @Setting(comment = "The player's nickname.")
+    private String nickname;
+
     // Non-persisted data - this is not saved when the user is unloaded.
 
     private WeakReference<CommandSource> replyRecipient = null;
 
-    public CommandSource getReplyRecipient() {
+    CommandSource getReplyRecipient() {
         return replyRecipient != null ? replyRecipient.get() : null;
     }
 
-    public void setReplyRecipient(CommandSource replyRecipient) {
+    void setReplyRecipient(CommandSource replyRecipient) {
         this.replyRecipient = new WeakReference<>(replyRecipient);
     }
 }
