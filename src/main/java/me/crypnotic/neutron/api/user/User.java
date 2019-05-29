@@ -30,8 +30,8 @@ public interface User<T extends CommandSource> {
     Optional<T> getBase();
 
     /**
-     * Get the name used to refer to the user. This may be their username or nickname.
-     * The console's preferred name is set in the config.
+     * Get the display name to refer to the user. This may be their username or nickname.
+     * The console's display name is set in the config.
      *
      * @return the user's username or nickname
      */
