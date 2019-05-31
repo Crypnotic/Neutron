@@ -19,19 +19,19 @@ public class NicknameCommand extends CommandWrapper {
         switch (context.get(0)) {
             case "get":
                 if (user.getNickname() != null) {
-                    source.sendMessage(getMessage(source, LocaleMessage.NICKNAME_CURRENT, user.getNickname()));
+                    message(source, LocaleMessage.NICKNAME_CURRENT, user.getNickname());
                 } else {
-                    source.sendMessage(getMessage(source, LocaleMessage.NICKNAME_NONE));
+                    message(source, LocaleMessage.NICKNAME_NONE);
                 }
                 break;
             case "clear":
                 user.setNickname(null);
-                source.sendMessage(getMessage(source, LocaleMessage.NICKNAME_CLEAR));
+                message(source, LocaleMessage.NICKNAME_CLEAR);
                 break;
             case "set":
                 assertUsage(source, context.size() > 1);
                 user.setNickname(context.get(1));
-                source.sendMessage(getMessage(source, LocaleMessage.NICKNAME_SET, user.getNickname()));
+                message(source, LocaleMessage.NICKNAME_SET, user.getNickname());
                 break;
             default:
                 assertUsage(source, false);
