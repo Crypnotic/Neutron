@@ -109,7 +109,7 @@ public class StringHelper {
         return StringHelper.formatAndColor(message.getDefaultMessage(), values);
     }
     
-    public static void broadcast(Collection<CommandSource> recipients, LocaleMessage message, Object... values) {
+    public static void broadcast(Collection<? extends CommandSource> recipients, LocaleMessage message, Object... values) {
         recipients.forEach(target -> message(target, message, values));
     }
 }
