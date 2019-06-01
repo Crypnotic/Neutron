@@ -32,6 +32,9 @@ public enum LocaleMessage {
 
     ALERT_MESSAGE("&7&l[&c&lALERT&7&l] &e{0}"),
 
+    CONNECT_JOIN_MESSAGE("&b{0} &7joined the network"),
+    CONNECT_QUIT_MESSAGE("&b{0} &7left the network"),
+
     FIND_MESSAGE("&b{0} &7is connected to &b{1}"),
 
     INFO_HEADER("&l&7==> Information for player: &b{0}"),
