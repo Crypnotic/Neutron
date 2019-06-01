@@ -24,6 +24,7 @@
 */
 package me.crypnotic.neutron.util;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -106,5 +107,9 @@ public class StringHelper {
             return table.get(message, values);
         }
         return StringHelper.formatAndColor(message.getDefaultMessage(), values);
+    }
+    
+    public static void broadcast(Collection<CommandSource> recipients, LocaleMessage message, Object... values) {
+        recipients.forEach(target -> message(target, message, values));
     }
 }

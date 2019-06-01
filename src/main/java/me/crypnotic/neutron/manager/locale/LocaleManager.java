@@ -35,12 +35,9 @@ import me.crypnotic.neutron.NeutronPlugin;
 import me.crypnotic.neutron.api.Reloadable;
 import me.crypnotic.neutron.api.StateResult;
 import me.crypnotic.neutron.api.configuration.Configuration;
-import me.crypnotic.neutron.api.locale.LocaleMessage;
 import me.crypnotic.neutron.api.locale.LocaleMessageTable;
 import me.crypnotic.neutron.util.ConfigHelper;
 import me.crypnotic.neutron.util.FileHelper;
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
 @RequiredArgsConstructor
 public class LocaleManager implements Reloadable {
@@ -71,12 +68,12 @@ public class LocaleManager implements Reloadable {
         loadDefaultLocale();
 
         if (!config.isAllowTranslations()) {
-            neutron.getLogger().info("Locale tranlations have been disabled. Only loading messages from default locale.");
+            neutron.getLogger().info("Locale translations have been disabled. Only loading messages from default locale.");
             return StateResult.success();
         }
 
         for (File file : folder.listFiles()) {
-            loadMessageTable(file);
+            LocaleMessageTable.load(file).ifPresent(table -> locales.put(table.getLocale(), table));
         }
 
         neutron.getLogger().info("Locales loaded: " + locales.size());
@@ -101,7 +98,8 @@ public class LocaleManager implements Reloadable {
         if (defaultLocale != null) {
             File defaultLocaleFile = FileHelper.getOrCreateLocale(folder.toPath(), fallbackLocaleName + ".conf");
             if (defaultLocaleFile != null) {
-                loadMessageTable(defaultLocaleFile);
+                LocaleMessageTable.load(defaultLocaleFile).ifPresent(table -> locales.put(table.getLocale(), table));
+
                 neutron.getLogger().info("Loaded fallback locale: " + fallbackLocaleName);
 
                 return;
@@ -116,34 +114,6 @@ public class LocaleManager implements Reloadable {
 
         this.defaultLocale = Locale.forLanguageTag("en_US");
         FileHelper.getOrCreateLocale(folder.toPath(), "en_US.conf");
-    }
-
-    private void loadMessageTable(File file) {
-        try {
-            String name = file.getName().split("\\.")[0];
-            Locale locale = Locale.forLanguageTag(name);
-            if (locale == null) {
-                neutron.getLogger().warn("Unknown locale attempted to load: " + name);
-                return;
-            }
-
-            HoconConfigurationLoader loader = HoconConfigurationLoader.builder().setFile(file).build();
-            ConfigurationNode node = loader.load();
-
-            LocaleMessageTable table = new LocaleMessageTable(locale);
-            for (LocaleMessage message : LocaleMessage.values()) {
-                String content = node.getNode(message.getName()).getString(message.getDefaultMessage());
-                if (content == null || content.isEmpty()) {
-                    content = message.getDefaultMessage();
-                }
-
-                table.set(message, content);
-            }
-
-            locales.put(locale, table);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
     }
 
     @Override

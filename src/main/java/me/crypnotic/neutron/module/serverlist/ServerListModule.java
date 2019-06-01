@@ -44,6 +44,7 @@ public class ServerListModule extends Module {
     @Getter
     private ServerListConfig config;
     private ScheduledTask pingTask;
+    private ServerListHandler handler;
     @Getter
     private int maxPlayerPing;
 
@@ -54,11 +55,13 @@ public class ServerListModule extends Module {
             return StateResult.fail();
         }
 
-        getNeutron().getProxy().getEventManager().register(getNeutron(), new ServerListHandler(this, config));
-
+        this.handler = new ServerListHandler(this, config);
+        
         if (config.getPlayerCount().getAction() == PlayerCount.PlayerCountAction.PING) {
             this.pingTask = getNeutron().getProxy().getScheduler().buildTask(getNeutron(), new PingTask()).repeat(5, TimeUnit.MINUTES).schedule();
         }
+
+        getNeutron().getProxy().getEventManager().register(getNeutron(), handler);
 
         return StateResult.success();
     }
@@ -73,6 +76,8 @@ public class ServerListModule extends Module {
         if (pingTask != null) {
             pingTask.cancel();
         }
+
+        getNeutron().getProxy().getEventManager().unregisterListener(getNeutron(), handler);
 
         return StateResult.success();
     }

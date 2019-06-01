@@ -24,12 +24,16 @@
 */
 package me.crypnotic.neutron.api.locale;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.crypnotic.neutron.api.Neutron;
+import me.crypnotic.neutron.api.configuration.Configuration;
 import me.crypnotic.neutron.util.StringHelper;
 import net.kyori.text.Component;
 
@@ -49,5 +53,28 @@ public class LocaleMessageTable {
     public boolean set(LocaleMessage key, String message) {
         /* Return true if no entry existed previously */
         return messages.put(key, message) == null;
+    }
+
+    public static Optional<LocaleMessageTable> load(File file) {
+        Configuration configuration = Configuration.builder().folder(file.getParentFile().toPath()).name(file.getName()).build();
+
+        String name = file.getName().split("\\.")[0];
+        Locale locale = Locale.forLanguageTag(name);
+        if (locale == null) {
+            Neutron.getNeutron().getLogger().warn("Unknown locale attempted to load: " + name);
+            return Optional.empty();
+        }
+
+        LocaleMessageTable table = new LocaleMessageTable(locale);
+        for (LocaleMessage message : LocaleMessage.values()) {
+            String text = configuration.getNode(message.getName()).getString(message.getDefaultMessage());
+            if (text == null || text.isEmpty()) {
+                text = message.getDefaultMessage();
+            }
+
+            table.set(message, text);
+        }
+        
+        return Optional.of(table);
     }
 }
