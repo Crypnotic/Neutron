@@ -43,10 +43,6 @@ public class ServerListHandler {
 
     @Subscribe
     public void onServerListPing(ProxyPingEvent event) {
-        if (!module.isEnabled()) {
-            return;
-        }
-
         ServerPing original = event.getPing();
 
         int playerCount = module.getNeutron().getProxy().getPlayerCount();

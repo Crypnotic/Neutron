@@ -40,10 +40,6 @@ public class ConnectMessageHandler {
 
     @Subscribe
     public void onPlayerJoin(PostLoginEvent event) {
-        if (!module.isEnabled()) {
-            return;
-        }
-
         if (config.isAllowSilentJoinQuit() && event.getPlayer().hasPermission("neutron.silentjoin")) {
             return;
         }
@@ -53,10 +49,6 @@ public class ConnectMessageHandler {
 
     @Subscribe
     public void onPlayerQuit(DisconnectEvent event) {
-        if (!module.isEnabled()) {
-            return;
-        }
-
         if (config.isAllowSilentJoinQuit() && event.getPlayer().hasPermission("neutron.silentquit")) {
             return;
         }
