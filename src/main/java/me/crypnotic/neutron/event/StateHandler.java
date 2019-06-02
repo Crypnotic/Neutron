@@ -58,14 +58,14 @@ public class StateHandler {
     }
 
     private void init(Reloadable reloadable) {
-        neutron.getLocaleManager().reload().fail("Failed to initialize {0}. Many features may not work", reloadable.getName());
+        reloadable.init().fail("Failed to initialize {0}. Many features may not work", reloadable.getName());
     }
-    
+
     private void reload(Reloadable reloadable) {
-        neutron.getLocaleManager().reload().fail("Failed to reload {0}. Many features may not work", reloadable.getName());
+        reloadable.reload().fail("Failed to reload {0}. Many features may not work", reloadable.getName());
     }
 
     private void shutdown(Reloadable reloadable) {
-        neutron.getLocaleManager().shutdown().fail("Failed to shutdown {0}!", reloadable.getName());
+        reloadable.shutdown().fail("Failed to shutdown {0}!", reloadable.getName());
     }
 }

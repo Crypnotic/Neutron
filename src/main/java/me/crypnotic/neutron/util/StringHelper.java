@@ -50,7 +50,7 @@ public class StringHelper {
             return null;
         }
 
-        return LegacyComponentSerializer.INSTANCE.deserialize(text, '&');
+        return LegacyComponentSerializer.legacyLinking().deserialize(text, '&');
     }
 
     public static Component serialize(String json) {
@@ -86,7 +86,7 @@ public class StringHelper {
     public static SamplePlayer[] toSamplePlayerArray(List<String> input) {
         SamplePlayer[] result = new SamplePlayer[input.size()];
         for (int i = 0; i < input.size(); i++) {
-            result[i] = new SamplePlayer(LegacyComponentSerializer.INSTANCE.serialize(color(input.get(i))), UUID.randomUUID());
+            result[i] = new SamplePlayer(LegacyComponentSerializer.legacy().serialize(color(input.get(i))), UUID.randomUUID());
         }
         return result;
     }

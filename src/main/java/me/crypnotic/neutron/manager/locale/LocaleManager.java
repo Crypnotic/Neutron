@@ -55,6 +55,7 @@ public class LocaleManager implements Reloadable {
     public StateResult init() {
         this.config = ConfigHelper.getSerializable(configuration.getNode("locale"), new LocaleConfig());
         if (config == null) {
+            System.out.println("Config fail");
             return StateResult.fail();
         }
 

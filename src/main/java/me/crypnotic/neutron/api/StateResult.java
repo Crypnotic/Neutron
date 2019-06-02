@@ -54,40 +54,44 @@ public class StateResult {
     }
 
     public void success(Runnable runnable) {
-        run(runnable);
+        if (success) {
+            run(runnable);
+        }
     }
 
     public void fail(Runnable runnable) {
-        run(runnable);
+        if (!success) {
+            run(runnable);
+        }
     }
 
     public void success(String message, Object... values) {
-        Neutron.getNeutron().getLogger().info(StringHelper.format(message, values));
+        success(() -> Neutron.getNeutron().getLogger().info(StringHelper.format(message, values)));
     }
 
     public void fail(String message, Object... values) {
-        Neutron.getNeutron().getLogger().warn(StringHelper.format(message, values));
+        fail(() -> Neutron.getNeutron().getLogger().warn(StringHelper.format(message, values)));
     }
-    
+
     public static StateResult success() {
         return new StateResult(true);
     }
-    
+
     public static StateResult fail() {
         return new StateResult(false);
     }
-    
+
     public static StateResult of(boolean value) {
         return new StateResult(value);
     }
-    
+
     public static StateResult of(StateResult... results) {
-        for(StateResult result : results) {
+        for (StateResult result : results) {
             if (!result.isSuccess()) {
                 return result;
             }
         }
-        
+
         return StateResult.success();
     }
 }

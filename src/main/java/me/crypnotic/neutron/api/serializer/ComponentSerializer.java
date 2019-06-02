@@ -51,7 +51,7 @@ public class ComponentSerializer implements TypeSerializer<Component> {
     @Override
     public void serialize(TypeToken<?> type, Component obj, ConfigurationNode value) throws ObjectMappingException {
         if (obj != null) {
-            value.setValue(LegacyComponentSerializer.INSTANCE.serialize(obj, '&'));
+            value.setValue(LegacyComponentSerializer.legacy().serialize(obj, '&'));
         }
     }
 }
