@@ -77,9 +77,11 @@ public class Announcement {
         Announcement announcement = new Announcement(neutron, id, data);
 
         announcement.init();
-        
-        announcement.task = neutron.getProxy().getScheduler().buildTask(neutron, announcement::broadcast)
-                .repeat(announcement.data.getInterval(), TimeUnit.SECONDS).schedule();
+
+        if (announcement.getData().isEnabled()) {
+            announcement.task = neutron.getProxy().getScheduler().buildTask(neutron, announcement::broadcast)
+                    .repeat(announcement.data.getInterval(), TimeUnit.SECONDS).schedule();
+        }
 
         return announcement;
     }

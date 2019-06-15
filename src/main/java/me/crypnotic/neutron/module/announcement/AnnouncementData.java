@@ -24,11 +24,13 @@
 */
 package me.crypnotic.neutron.module.announcement;
 
+import java.util.Arrays;
 import java.util.List;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.text.Component;
+import net.kyori.text.TextComponent;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
@@ -37,15 +39,18 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 public class AnnouncementData {
 
     @Getter
+    @Setting("enabled")
+    private boolean enabled = true;
+    @Getter
     @Setting("interval")
-    private long interval;
+    private long interval = 300;
     @Getter
     @Setting("maintain-order")
-    private boolean maintainOrder;
+    private boolean maintainOrder = true;
     @Getter
     @Setting("messages")
-    private List<Component> messages;
+    private List<Component> messages = Arrays.asList();
     @Getter
     @Setting("prefix")
-    private Component prefix;
+    private Component prefix = TextComponent.empty();
 }
