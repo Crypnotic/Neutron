@@ -72,7 +72,7 @@ public class AnnouncementModule extends Module {
 
     @Override
     public StateResult shutdown() {
-        announcements.values().stream().map(Announcement::getTask).forEach(ScheduledTask::cancel);
+        announcements.values().stream().filter(announcement -> announcement.getData().isEnabled()).map(Announcement::getTask).forEach(ScheduledTask::cancel);
 
         announcements.clear();
 
