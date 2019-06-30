@@ -76,6 +76,6 @@ public class IgnoreCommand extends CommandWrapper {
 
     @Override
     public String getUsage() {
-        return "/ignore (player)";
+        return "/ignore [player]";
     }
 }
