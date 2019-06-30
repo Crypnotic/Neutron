@@ -38,6 +38,10 @@ public enum LocaleMessage {
     FIND_MESSAGE("&b{0} &7is connected to &b{1}"),
 
     IGNORE_AMBIGUOUS_PLAYER("&cPlayer '{0}' is ambiguous; did you mean: {1}"),
+    IGNORE_LIST_EMPTY("&aYou are not ignoring anyone."),
+    IGNORE_LIST_HEAD("&aYou are ignoring the following players:\n"),
+    IGNORE_LIST_ITEM("&f{0}&7, "),
+    IGNORE_LIST_ITEM_UNKNOWN("&f&ounknown&7, "),
     IGNORE_NOW_IGNORING("&aYou are now ignoring {0}."),
     IGNORE_NOW_NOT_IGNORING("&aYou are no longer ignoring {0}."),
 

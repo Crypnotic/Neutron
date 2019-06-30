@@ -6,22 +6,60 @@ import me.crypnotic.neutron.api.command.CommandContext;
 import me.crypnotic.neutron.api.command.CommandWrapper;
 import me.crypnotic.neutron.api.locale.LocaleMessage;
 import me.crypnotic.neutron.api.user.User;
+import net.kyori.text.Component;
+import net.kyori.text.TextComponent;
+import net.kyori.text.event.HoverEvent;
 
-import java.util.Collection;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class IgnoreCommand extends CommandWrapper {
     @Override
     public void handle(CommandSource source, CommandContext context) throws CommandExitException {
         assertPermission(source, "neutron.command.ignore");
         assertPlayer(source, LocaleMessage.PLAYER_ONLY_COMMAND);
-        assertUsage(source, context.size() > 0);
 
+        if (context.size() == 0) {
+            handleList(source);
+        } else {
+            handleToggle(source, context);
+        }
+    }
+
+    private void handleList(CommandSource source) throws CommandExitException {
+        User<? extends CommandSource> user = getUser(source).get();
+
+        if (user.getIgnoredPlayers().isEmpty()) {
+            message(source, LocaleMessage.IGNORE_LIST_EMPTY);
+            return;
+        }
+
+        Component message = getMessage(source, LocaleMessage.IGNORE_LIST_HEAD);
+
+        for (UUID uuid : user.getIgnoredPlayers()) {
+            Optional<User<? extends CommandSource>> optUser = getNeutron().getUserManager().getUser(uuid);
+
+            if (optUser.isPresent()) {
+                User<? extends CommandSource> ignored = optUser.get();
+                message = message.append(getMessage(source, LocaleMessage.IGNORE_LIST_ITEM, ignored.getName()));
+            } else {
+                message = message.append(
+                    getMessage(source, LocaleMessage.IGNORE_LIST_ITEM_UNKNOWN, uuid.toString())
+                        .hoverEvent(HoverEvent.of(HoverEvent.Action.SHOW_TEXT, TextComponent.of(uuid.toString()))));
+            }
+
+            source.sendMessage(message);
+        }
+
+    }
+
+    private void handleToggle(CommandSource source, CommandContext context) throws CommandExitException {
         Collection<Player> matches = getNeutron().getProxy().matchPlayer(context.get(0));
         assertCustom(source, matches.size() != 0, LocaleMessage.UNKNOWN_PLAYER);
         assertCustom(source, matches.size() < 2, LocaleMessage.IGNORE_AMBIGUOUS_PLAYER);
         Player target = matches.stream().findFirst().get();
 
-        User user = getUser(source).get();
+        User<? extends CommandSource> user = getUser(source).get();
 
         boolean newState = !user.isIgnoringPlayer(target);
 
