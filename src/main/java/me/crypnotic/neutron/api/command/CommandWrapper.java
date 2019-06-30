@@ -79,6 +79,12 @@ public abstract class CommandWrapper implements Command {
     }
 
     @SneakyThrows
+    public void assertNotIgnoring(CommandSource source, CommandSource ignoreSource, Player target, LocaleMessage message, Object... values) {
+        boolean ignoring = getUser(ignoreSource).map(user -> !user.isIgnoringPlayer(target)).orElse(false);
+        assertCustom(source, !ignoring, message, values);
+    }
+
+    @SneakyThrows
     public void assertPermission(CommandSource source, String permission) {
         assertCustom(source, source.hasPermission(permission), LocaleMessage.NO_PERMISSION);
     }

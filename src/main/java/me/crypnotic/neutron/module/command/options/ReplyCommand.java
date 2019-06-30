@@ -60,6 +60,16 @@ public class ReplyCommand extends CommandWrapper {
         final Optional<User<? extends CommandSource>> sender = getUser(source);
         final Optional<User<? extends CommandSource>> recipient = getUser(target);
 
+        // Ensure source is not ignoring target
+        if (target instanceof Player) {
+            assertNotIgnoring(source, source, (Player) target, LocaleMessage.MESSAGE_IGNORING_TARGET);
+        }
+
+        // Ensure target is not ignoring source
+        if (source instanceof Player) {
+            assertNotIgnoring(source, target, (Player) source, LocaleMessage.MESSAGE_IGNORED_BY_TARGET);
+        }
+
         UserPrivateMessageEvent event = new UserPrivateMessageEvent(sender, recipient, content, true);
 
         getNeutron().getProxy().getEventManager().fire(event).thenAccept(resultEvent -> {

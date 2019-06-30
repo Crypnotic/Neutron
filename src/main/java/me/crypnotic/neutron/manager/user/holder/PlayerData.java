@@ -6,6 +6,8 @@ import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 import java.lang.ref.WeakReference;
+import java.util.Set;
+import java.util.UUID;
 
 @ConfigSerializable
 @Data
@@ -18,6 +20,9 @@ class PlayerData {
 
     @Setting(comment = "The player's last known username.")
     private String username;
+
+    @Setting(comment = "Players that this player is ignoring")
+    private Set<UUID> ignoredPlayers;
 
     // Non-persisted data - this is not saved when the user is unloaded.
 

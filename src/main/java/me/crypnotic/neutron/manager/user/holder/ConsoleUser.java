@@ -1,6 +1,8 @@
 package me.crypnotic.neutron.manager.user.holder;
 
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import com.velocitypowered.api.command.CommandSource;
@@ -41,5 +43,20 @@ public class ConsoleUser implements User<ConsoleCommandSource> {
     @Override
     public Optional<UUID> getUUID() {
         return Optional.empty();
+    }
+
+    @Override
+    public void setIgnoringPlayer(CommandSource source) {
+        /* noop */
+    }
+
+    @Override
+    public Set<CommandSource> getIgnoredPlayers() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public boolean isIgnoringPlayer(CommandSource source) {
+        return false;
     }
 }
