@@ -28,7 +28,7 @@ public interface User<T extends CommandSource> {
     void setIgnoringPlayer(Player target, boolean ignore);
 
     default boolean isIgnoringPlayer(Player target) {
-        return getIgnoredPlayers().contains(target);
+        return getIgnoredPlayers().contains(target.getUniqueId());
     }
 
     default boolean isPlayer() {
