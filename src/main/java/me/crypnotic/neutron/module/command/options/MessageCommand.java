@@ -63,7 +63,7 @@ public class MessageCommand extends CommandWrapper {
         assertNotIgnoring(source, source, target, LocaleMessage.MESSAGE_IGNORING_TARGET);
 
         // Ensure target is not ignoring source
-        if (source instanceof Player && !source.hasPermission("neutron.message.ignore.bypass")) {
+        if (source instanceof Player && !source.hasPermission("neutron.command.message.ignore.bypass")) {
             assertNotIgnoring(source, target, (Player) source, LocaleMessage.MESSAGE_IGNORED_BY_TARGET);
         }
 
