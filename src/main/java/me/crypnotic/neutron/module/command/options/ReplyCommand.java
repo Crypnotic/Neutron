@@ -62,12 +62,12 @@ public class ReplyCommand extends CommandWrapper {
 
         // Ensure source is not ignoring target
         if (target instanceof Player) {
-            assertNotIgnoring(source, source, (Player) target, LocaleMessage.MESSAGE_IGNORING_TARGET);
+            assertNotIgnoring(source, source, (Player) target, LocaleMessage.MESSAGE_IGNORING_TARGET, targetName);
         }
 
         // Ensure target is not ignoring source
         if (source instanceof Player && !source.hasPermission("neutron.command.message.ignore.bypass")) {
-            assertNotIgnoring(source, target, (Player) source, LocaleMessage.MESSAGE_IGNORED_BY_TARGET);
+            assertNotIgnoring(source, target, (Player) source, LocaleMessage.MESSAGE_IGNORED_BY_TARGET, targetName);
         }
 
         UserPrivateMessageEvent event = new UserPrivateMessageEvent(sender, recipient, content, true);
