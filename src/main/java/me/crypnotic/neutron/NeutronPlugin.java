@@ -1,8 +1,8 @@
 /*
 * This file is part of Neutron, licensed under the MIT License
 *
-* Copyright (c) 2019 Crypnotic <crypnoticofficial@gmail.com>
-*
+* Copyright (c) 2020 Crypnotic <crypnoticofficial@gmail.com>
+* Copyright (c) 2020 Contributors
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -61,7 +61,7 @@ public class NeutronPlugin {
     private Configuration configuration;
 
     private StateHandler stateHandler;
-    
+
     @Getter
     private LocaleManager localeManager;
     @Getter
@@ -76,15 +76,15 @@ public class NeutronPlugin {
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
         this.configuration = Configuration.builder().folder(dataFolderPath).name("config.conf").build();
-        
+
         this.stateHandler = new StateHandler(this);
-        
+
         this.localeManager = new LocaleManager(this, configuration);
         this.userManager = new UserManager(configuration);
         this.moduleManager = new ModuleManager(this, configuration);
-        
+
         stateHandler.init();
-        
+
         proxy.getEventManager().register(this, new StateHandler(this));
     }
 }
