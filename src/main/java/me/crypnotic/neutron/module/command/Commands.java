@@ -38,6 +38,7 @@ public enum Commands {
     INFO("info", InfoCommand::new),
     GLIST("glist", GlistCommand::new),
     MESSAGE("message", MessageCommand::new),
+    NICKNAME("nickname", NicknameCommand::new),
     REPLY("reply", ReplyCommand::new),
     SEND("send", SendCommand::new);
 

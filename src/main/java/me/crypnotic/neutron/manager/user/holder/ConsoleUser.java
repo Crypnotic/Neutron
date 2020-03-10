@@ -53,6 +53,16 @@ public class ConsoleUser implements User<ConsoleCommandSource> {
     }
 
     @Override
+    public String getNickname() {
+        return null;
+    }
+
+    @Override
+    public String getUsername() {
+        return null;
+    }
+
+    @Override
     public void load() throws Exception {
         /* noop */
     }
@@ -65,5 +75,10 @@ public class ConsoleUser implements User<ConsoleCommandSource> {
     @Override
     public Optional<UUID> getUUID() {
         return Optional.empty();
+    }
+
+    @Override
+    public void setNickname(String nickname) {
+        /* noop */
     }
 }

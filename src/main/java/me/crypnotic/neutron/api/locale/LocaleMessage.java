@@ -52,6 +52,11 @@ public enum LocaleMessage {
     MESSAGE_SENDER("&b&lme \u00bb {0} &7> &o"),
     MESSAGE_RECEIVER("&b&l{0} \u00bb me &7> &o"),
 
+    NICKNAME_CLEAR("&aYou nickname has been cleared."),
+    NICKNAME_CURRENT("&aCurrent nickname: &r{0}"),
+    NICKNAME_NONE("&aYou don't have a nickname."),
+    NICKNAME_SET("&aYou nickname is now &r{0}&r&a."),
+
     NO_PERMISSION("&cYou don't have permission to execute this command."),
     NOT_CONNECTED_TO_SERVER("&cYou must be connected to a server to use this subcommand."),
 
