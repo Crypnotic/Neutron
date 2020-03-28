@@ -37,6 +37,14 @@ public enum LocaleMessage {
 
     FIND_MESSAGE("&b{0} &7is connected to &b{1}"),
 
+    IGNORE_AMBIGUOUS_PLAYER("&cPlayer '{0}' is ambiguous; did you mean: {1}"),
+    IGNORE_LIST_EMPTY("&aYou are not ignoring anyone."),
+    IGNORE_LIST_HEAD("&aYou are ignoring the following players:\n"),
+    IGNORE_LIST_ITEM("&f{0}&7, "),
+    IGNORE_LIST_ITEM_UNKNOWN("&f&ounknown&7, "),
+    IGNORE_NOW_IGNORING("&aYou are now ignoring {0}."),
+    IGNORE_NOW_NOT_IGNORING("&aYou are no longer ignoring {0}."),
+
     INFO_HEADER("&l&7==> Information for player: &b{0}"),
     INFO_LOCALE("&7Locale: &b{0}"),
     INFO_PING("&7Ping: &b{0}"),
@@ -49,6 +57,8 @@ public enum LocaleMessage {
     LIST_HEADER("&aThere are currently &b{0} &aplayers online\n&7&oHover over a server to see the players online"),
     LIST_MESSAGE("&a[{0}] &e{1} player{2} online"),
 
+    MESSAGE_IGNORED_BY_TARGET("&cYou can't message {0} right now."),
+    MESSAGE_IGNORING_TARGET("&cYou can't message {0} because you are ignoring them."),
     MESSAGE_SENDER("&b&lme \u00bb {0} &7> &o"),
     MESSAGE_RECEIVER("&b&l{0} \u00bb me &7> &o"),
 

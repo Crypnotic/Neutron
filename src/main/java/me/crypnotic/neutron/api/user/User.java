@@ -25,6 +25,7 @@
 package me.crypnotic.neutron.api.user;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import com.velocitypowered.api.command.CommandSource;
@@ -41,10 +42,18 @@ public interface User<T extends CommandSource> {
     String getName();
 
     CommandSource getReplyRecipient();
+
+    Set<UUID> getIgnoredPlayers();
     
     Optional<UUID> getUUID();
 
     void setReplyRecipient(CommandSource source);
+
+    void setIgnoringPlayer(Player target, boolean ignore);
+
+    default boolean isIgnoringPlayer(Player target) {
+        return getIgnoredPlayers().contains(target.getUniqueId());
+    }
 
     default boolean isPlayer() {
         return getBase().isPresent() && getBase().get() instanceof Player;

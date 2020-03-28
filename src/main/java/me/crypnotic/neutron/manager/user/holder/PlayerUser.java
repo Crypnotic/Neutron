@@ -27,9 +27,12 @@ package me.crypnotic.neutron.manager.user.holder;
 import static me.crypnotic.neutron.api.Neutron.getNeutron;
 
 import java.lang.ref.WeakReference;
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
+import com.google.common.collect.Sets;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 
@@ -91,7 +94,25 @@ public class PlayerUser implements User<Player> {
         return data.getReplyRecipient();
     }
 
+    @Override
+    public Set<UUID> getIgnoredPlayers() {
+        return Collections.unmodifiableSet(data.getIgnoredPlayers());
+    }
+
     public void setReplyRecipient(CommandSource source) {
         data.setReplyRecipient(source);
+    }
+
+    @Override
+    public void setIgnoringPlayer(Player target, boolean ignore) {
+        Set<UUID> newSet = Sets.newHashSet(data.getIgnoredPlayers());
+
+        if (ignore) {
+            newSet.add(target.getUniqueId());
+        } else {
+            newSet.remove(target.getUniqueId());
+        }
+
+        data.setIgnoredPlayers(Collections.unmodifiableSet(newSet));
     }
 }

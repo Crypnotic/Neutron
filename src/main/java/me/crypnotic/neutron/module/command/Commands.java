@@ -35,6 +35,7 @@ import me.crypnotic.neutron.module.command.options.*;
 public enum Commands {
     ALERT("alert", AlertCommand::new),
     FIND("find", FindCommand::new),
+    IGNORE("ignore", IgnoreCommand::new),
     INFO("info", InfoCommand::new),
     GLIST("glist", GlistCommand::new),
     MESSAGE("message", MessageCommand::new),

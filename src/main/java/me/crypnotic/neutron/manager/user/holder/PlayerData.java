@@ -24,12 +24,18 @@
 */
 package me.crypnotic.neutron.manager.user.holder;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.velocitypowered.api.command.CommandSource;
 import lombok.Data;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 import java.lang.ref.WeakReference;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @ConfigSerializable
 @Data
@@ -42,6 +48,17 @@ class PlayerData {
 
     @Setting(comment = "The player's last known username.")
     private String username;
+
+    @Setting(comment = "Players that this player is ignoring")
+    private List<UUID> ignoredPlayers = Collections.emptyList(); // Configurate includes a List TypeSerializer, so let's use that.
+
+    public Set<UUID> getIgnoredPlayers() {
+        return Sets.newHashSet(ignoredPlayers);
+    }
+
+    public void setIgnoredPlayers(Set<UUID> ignoredPlayers) {
+        this.ignoredPlayers = Lists.newArrayList(ignoredPlayers);
+    }
 
     // Non-persisted data - this is not saved when the user is unloaded.
 
