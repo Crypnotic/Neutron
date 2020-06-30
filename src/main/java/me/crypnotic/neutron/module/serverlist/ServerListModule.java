@@ -47,6 +47,8 @@ public class ServerListModule extends Module {
     private ServerListHandler handler;
     @Getter
     private int maxPlayerPing;
+    @Getter
+    private int onlinePlayerPing;
 
     @Override
     public StateResult init() {
@@ -90,6 +92,7 @@ public class ServerListModule extends Module {
     public class PingTask implements Runnable {
 
         int buffer = 0;
+        int onlineBuffer = 0;
 
         @Override
         public void run() {
@@ -100,6 +103,7 @@ public class ServerListModule extends Module {
 
                     if (players.isPresent()) {
                         buffer += players.get().getMax();
+                        onlineBuffer += players.get().getOnline();
                     }
                 } catch (InterruptedException | ExecutionException exception) {
                     /* Catch silently */
@@ -108,7 +112,9 @@ public class ServerListModule extends Module {
             }
 
             maxPlayerPing = buffer;
+            onlinePlayerPing = onlineBuffer;
             buffer = 0;
+            onlineBuffer = 0;
         }
     }
 }
