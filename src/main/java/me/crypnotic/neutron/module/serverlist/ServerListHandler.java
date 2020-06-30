@@ -50,11 +50,22 @@ public class ServerListHandler {
         Builder builder = ServerPing.builder();
 
         builder.version(original.getVersion());
-        builder.onlinePlayers(playerCount);
 
         original.getFavicon().ifPresent(builder::favicon);
 
         builder.description(config.getMotd());
+
+        switch (config.getOnlinePlayerCount().getAction()) {
+            case STATIC:
+                builder.onlinePlayers(playerCount);
+                break;
+            case PING:
+                builder.onlinePlayers(module.getOnlinePlayerPing());
+                break;
+            case CURRENT:
+                builder.onlinePlayers(module.getNeutron().getProxy().getPlayerCount());
+                break;
+        }
 
         switch (config.getPlayerCount().getAction()) {
         case CURRENT:
